@@ -23,8 +23,7 @@ const isInSettings = computed(() => {
   const path = route.path
   return path.startsWith('/accounts') ||
     path.startsWith('/categories') ||
-    path.startsWith('/profile/api-tokens') ||
-    path.startsWith('/workspaces/')
+    path.startsWith('/workspaces')
 })
 
 // Open settings if we're in a settings page
@@ -51,24 +50,18 @@ const mainNavigation = computed(() => [
 
 const transactionNavigation = computed(() => [
   { name: 'Transacciones', to: '/transactions', icon: BanknotesIcon, active: isActive('/transactions') },
-  { name: 'Presupuestos', to: '/budgets', icon: BanknotesIcon, active: isActive('/budgets') && !route.path.includes('/reports') },
 ])
 
 const reportsNavigation = computed(() => [
   { name: 'Estado Patrimonial', to: '/reports/balance-sheet', icon: DocumentTextIcon, active: isActive('/reports/balance-sheet') },
   { name: 'Estado de Resultados', to: '/reports/income-statement', icon: DocumentTextIcon, active: isActive('/reports/income-statement') },
-  { name: 'Presupuestos', to: '/budgets/reports', icon: BanknotesIcon, active: isActive('/budgets/reports') },
 ])
 
-const settingsNavigation = computed(() => {
-  const workspaceId = auth.workspace?.id
-  return [
-    { name: 'Workspace', to: workspaceId ? `/workspaces/${workspaceId}/settings` : '#', active: isActive('/workspaces/') },
-    { name: 'Cuentas', to: '/accounts', active: isActive('/accounts') },
-    { name: 'Categorías', to: '/categories', active: isActive('/categories') },
-    { name: 'API Tokens', to: '/profile/api-tokens', active: isActive('/profile/api-tokens') },
-  ]
-})
+const settingsNavigation = computed(() => [
+  { name: 'Workspaces', to: '/workspaces', active: isActive('/workspaces') },
+  { name: 'Cuentas', to: '/accounts', active: isActive('/accounts') },
+  { name: 'Categorías', to: '/categories', active: isActive('/categories') },
+])
 
 const handleNavClick = () => {
   ui.closeSidebar()

@@ -31,22 +31,31 @@ const sizeClasses: Record<Size, string> = {
 }
 
 const isDisabled = computed(() => props.disabled || props.loading)
+
+const buttonClasses = computed(() => [
+  variantClasses[props.variant],
+  sizeClasses[props.size],
+  'inline-flex justify-center items-center border font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors',
+  isDisabled.value ? 'opacity-50 cursor-not-allowed' : '',
+])
 </script>
 
 <template>
-  <component
-    :is="to ? resolveComponent('NuxtLink') : 'button'"
-    :type="to ? undefined : type"
+  <NuxtLink
+    v-if="to"
     :to="to"
-    :disabled="isDisabled"
-    :class="[
-      variantClasses[variant],
-      sizeClasses[size],
-      'inline-flex justify-center items-center border font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors',
-      isDisabled ? 'opacity-50 cursor-not-allowed' : '',
-    ]"
+    :class="buttonClasses"
   >
-    <LoadingSpinner v-if="loading" size="sm" class="mr-2" />
+    <CommonLoadingSpinner v-if="loading" size="sm" class="mr-2" />
     <slot />
-  </component>
+  </NuxtLink>
+  <button
+    v-else
+    :type="type"
+    :disabled="isDisabled"
+    :class="buttonClasses"
+  >
+    <CommonLoadingSpinner v-if="loading" size="sm" class="mr-2" />
+    <slot />
+  </button>
 </template>

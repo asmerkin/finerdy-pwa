@@ -1,17 +1,48 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite'
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-12-01',
   devtools: { enabled: true },
 
+  // SPA mode via routeRules (avoids unhead bug with ssr:false)
+  routeRules: {
+    '/**': { ssr: false },
+  },
+
   modules: [
     '@pinia/nuxt',
-    '@nuxtjs/tailwindcss',
     '@vite-pwa/nuxt',
+    '@nuxtjs/i18n',
   ],
+
+  // i18n configuration
+  i18n: {
+    locales: [
+      { code: 'en', file: 'en.json', name: 'English' },
+      { code: 'es', file: 'es.json', name: 'Español' },
+    ],
+    defaultLocale: 'en',
+    lazy: true,
+    langDir: 'locales',
+    strategy: 'no_prefix',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_locale',
+      fallbackLocale: 'en',
+    },
+  },
+
+  vite: {
+    plugins: [
+      tailwindcss(),
+    ],
+  },
 
   // Runtime config for API
   runtimeConfig: {
     public: {
+      // Direct call to Laravel backend
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost',
     },
   },
@@ -72,11 +103,8 @@ export default defineNuxtConfig({
     },
   },
 
-  // Tailwind configuration
-  tailwindcss: {
-    cssPath: '~/assets/css/main.css',
-    configPath: 'tailwind.config.ts',
-  },
+  // Global CSS (after Tailwind)
+  css: ['~/assets/css/main.css'],
 
   // App configuration
   app: {

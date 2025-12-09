@@ -1,7 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'auth',
-  middleware: 'guest',
 })
 
 const auth = useAuthStore()
@@ -34,11 +33,11 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <Card>
+  <CommonCard>
     <form class="space-y-6" @submit.prevent="handleSubmit">
       <div>
         <label for="name" class="block text-sm font-medium text-gray-700">
-          Nombre
+          Name
         </label>
         <input
           id="name"
@@ -46,8 +45,8 @@ const handleSubmit = async () => {
           type="text"
           autocomplete="name"
           required
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-        />
+          class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none sm:text-sm"
+        >
         <p v-if="errors.name" class="mt-1 text-sm text-danger-600">
           {{ errors.name[0] }}
         </p>
@@ -63,8 +62,8 @@ const handleSubmit = async () => {
           type="email"
           autocomplete="email"
           required
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-        />
+          class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none sm:text-sm"
+        >
         <p v-if="errors.email" class="mt-1 text-sm text-danger-600">
           {{ errors.email[0] }}
         </p>
@@ -72,7 +71,7 @@ const handleSubmit = async () => {
 
       <div>
         <label for="password" class="block text-sm font-medium text-gray-700">
-          Contraseña
+          Password
         </label>
         <input
           id="password"
@@ -80,8 +79,8 @@ const handleSubmit = async () => {
           type="password"
           autocomplete="new-password"
           required
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-        />
+          class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none sm:text-sm"
+        >
         <p v-if="errors.password" class="mt-1 text-sm text-danger-600">
           {{ errors.password[0] }}
         </p>
@@ -89,7 +88,7 @@ const handleSubmit = async () => {
 
       <div>
         <label for="password_confirmation" class="block text-sm font-medium text-gray-700">
-          Confirmar contraseña
+          Confirm password
         </label>
         <input
           id="password_confirmation"
@@ -97,11 +96,11 @@ const handleSubmit = async () => {
           type="password"
           autocomplete="new-password"
           required
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-        />
+          class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none sm:text-sm"
+        >
       </div>
 
-      <FormButton
+      <FormsFormButton
         type="submit"
         variant="primary"
         size="lg"
@@ -109,15 +108,15 @@ const handleSubmit = async () => {
         :loading="isSubmitting"
         :disabled="isSubmitting"
       >
-        Registrarse
-      </FormButton>
+        Sign up
+      </FormsFormButton>
 
       <p class="text-center text-sm text-gray-600">
-        ¿Ya tienes cuenta?
+        Already have an account?
         <NuxtLink to="/login" class="font-medium text-primary-600 hover:text-primary-500">
-          Inicia sesión
+          Sign in
         </NuxtLink>
       </p>
     </form>
-  </Card>
+  </CommonCard>
 </template>

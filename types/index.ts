@@ -28,17 +28,20 @@ export interface Account {
   id: number
   name: string
   currency: string
-  balance: number
+  balance: string // Decimal formatted string from API (e.g., "8240.00")
   workspace_id: number
   created_at: string
   updated_at: string
 }
 
 // Category types
+export type CategoryTransactionType = 'income' | 'outcome'
+
 export interface Category {
   id: number
   name: string
-  description: string | null
+  transaction_type: CategoryTransactionType
+  reference_balance?: string
   workspace_id: number
   created_at: string
   updated_at: string
@@ -50,9 +53,13 @@ export type TransactionType = 'income' | 'outcome' | 'transfer' | 'exchange'
 export interface Transaction {
   id: number
   type: TransactionType
-  amount: number
+  amount: string // Decimal formatted string from API (e.g., "-1000.00")
+  reference_amount?: string | null
+  exchange_difference?: string | null
   currency: string
   description: string | null
+  attachment_path?: string | null
+  attachment_name?: string | null
   happened_at: string
   account_id: number
   category_id: number | null
@@ -60,10 +67,23 @@ export interface Transaction {
   budget_id: number | null
   created_by: number | null
   workspace_id: number
+  media_count?: number
   account?: Account
-  category?: Category
-  related?: Transaction
-  creator?: User
+  category?: Category | null
+  related?: {
+    id: number
+    workspace_id: number
+    account_id: number
+    type: TransactionType
+    amount: string
+    currency: string
+    description: string | null
+    happened_at: string
+  }
+  creator?: {
+    id: number
+    name: string
+  } | null
   created_at: string
   updated_at: string
 }

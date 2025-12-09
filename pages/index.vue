@@ -6,9 +6,7 @@ import {
   CurrencyDollarIcon,
 } from '@heroicons/vue/24/outline'
 
-definePageMeta({
-  middleware: 'auth',
-})
+// No middleware needed - global auth middleware handles protection
 
 const auth = useAuthStore()
 
@@ -21,26 +19,26 @@ const criticalBudgets = computed(() => dashboardData.value?.criticalBudgets || [
 
 const quickActions = [
   {
-    name: 'Nueva Cuenta',
-    description: 'Agrega una nueva cuenta bancaria o de efectivo',
+    name: 'New Account',
+    description: 'Add a new bank account or cash account',
     to: '/accounts/create',
     icon: BanknotesIcon,
   },
   {
-    name: 'Nueva Transacción',
-    description: 'Registra un ingreso o gasto',
+    name: 'New Transaction',
+    description: 'Record an income or expense',
     to: '/transactions/create',
     icon: PlusIcon,
   },
   {
-    name: 'Transferencia',
-    description: 'Mueve dinero entre cuentas',
+    name: 'Transfer',
+    description: 'Move money between accounts',
     to: '/transactions/transfer/create',
     icon: ArrowsRightLeftIcon,
   },
   {
-    name: 'Cambio de Moneda',
-    description: 'Convierte entre diferentes monedas',
+    name: 'Currency Exchange',
+    description: 'Convert between different currencies',
     to: '/transactions/exchange/create',
     icon: CurrencyDollarIcon,
   },
@@ -75,16 +73,13 @@ const quickActions = [
       </NuxtLink>
     </div>
 
-    <!-- Critical Budgets Widget -->
-    <Card v-if="criticalBudgets.length > 0" title="Presupuestos Críticos">
+    <!-- Critical Budgets Widget (TODO: Implement budgets feature) -->
+    <CommonCard v-if="criticalBudgets.length > 0" title="Critical Budgets">
       <template #header>
         <div class="flex items-center justify-between px-4 py-5 sm:px-6 border-b border-gray-200">
           <h3 class="text-lg font-semibold">
-            Presupuestos Críticos
+            Critical Budgets
           </h3>
-          <NuxtLink to="/budgets" class="text-sm text-primary-600 hover:text-primary-700">
-            Ver todos
-          </NuxtLink>
         </div>
       </template>
 
@@ -107,7 +102,7 @@ const quickActions = [
             </span>
           </div>
           <div class="text-xs text-gray-500 mb-2">
-            {{ budget.category?.name }} • {{ budget.period_label }}
+            {{ budget.category?.name }} - {{ budget.period_label }}
           </div>
           <div class="w-full bg-gray-200 rounded-full h-2">
             <div
@@ -118,22 +113,22 @@ const quickActions = [
           </div>
         </div>
       </div>
-    </Card>
+    </CommonCard>
 
     <!-- Welcome Card -->
-    <Card title="Bienvenido a Finerdy">
+    <CommonCard title="Welcome to Finerdy">
       <p class="text-gray-600">
-        Gestiona tus finanzas personales de manera simple y efectiva.
-        Registra tus ingresos, gastos, y mantén el control de tu dinero.
+        Manage your personal finances simply and effectively.
+        Record your income, expenses, and keep control of your money.
       </p>
       <div class="mt-4 flex flex-wrap gap-3">
-        <FormButton to="/accounts" variant="primary">
-          Ver Cuentas
-        </FormButton>
-        <FormButton to="/transactions" variant="secondary">
-          Ver Transacciones
-        </FormButton>
+        <FormsFormButton to="/accounts" variant="primary">
+          View Accounts
+        </FormsFormButton>
+        <FormsFormButton to="/transactions" variant="secondary">
+          View Transactions
+        </FormsFormButton>
       </div>
-    </Card>
+    </CommonCard>
   </div>
 </template>

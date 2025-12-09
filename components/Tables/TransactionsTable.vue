@@ -72,8 +72,16 @@ const getEditRoute = (transaction: Transaction) => {
 </script>
 
 <template>
+  <!-- Transaction Detail Modal -->
+  <ModalsTransactionDetail
+    :transaction="selectedTransaction"
+    :reference-currency="referenceCurrency"
+    @close="closeDetailModal"
+    @view-related="openDetailModal"
+  />
+
   <!-- Delete Confirmation Dialog -->
-  <ConfirmDialog
+  <CommonConfirmDialog
     :open="showDeleteDialog"
     title="Eliminar transacción"
     message="¿Estás seguro de que deseas eliminar esta transacción? Esta acción no se puede deshacer."
@@ -92,12 +100,16 @@ const getEditRoute = (transaction: Transaction) => {
       class="bg-white border border-gray-200 rounded-lg p-4 space-y-3 cursor-pointer hover:border-primary-300 transition-colors"
       @click="openDetailModal(transaction)"
     >
-      <!-- Fecha + Badge -->
+      <!-- Fecha + Badge + Attachments -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="text-xs text-gray-500">{{ formatDateTime(transaction.happened_at) }}</span>
+          <div v-if="transaction.media_count > 0" class="flex items-center gap-1 text-gray-500">
+            <PaperClipIcon class="h-3 w-3" />
+            <span class="text-xs">{{ transaction.media_count }}</span>
+          </div>
         </div>
-        <Badge :type="transaction.type" />
+        <CommonBadge :type="transaction.type" />
       </div>
 
       <!-- Cuenta + Categoría -->
@@ -131,13 +143,13 @@ const getEditRoute = (transaction: Transaction) => {
 
       <!-- Acciones -->
       <div v-if="showActions" class="flex gap-1 justify-end pt-2 border-t border-gray-100" @click.stop>
-        <IconButton
+        <FormsIconButton
           :to="getEditRoute(transaction)"
           :icon="PencilIcon"
           variant="secondary"
           size="sm"
         />
-        <IconButton
+        <FormsIconButton
           :icon="TrashIcon"
           variant="danger"
           size="sm"
@@ -154,6 +166,9 @@ const getEditRoute = (transaction: Transaction) => {
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
             Fecha
+          </th>
+          <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <PaperClipIcon class="h-4 w-4 inline" />
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
             Tipo
@@ -188,8 +203,14 @@ const getEditRoute = (transaction: Transaction) => {
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
             {{ formatDateTime(transaction.happened_at) }}
           </td>
+          <td class="px-6 py-4 whitespace-nowrap text-center">
+            <div v-if="transaction.media_count > 0" class="flex items-center justify-center gap-1 text-gray-500">
+              <PaperClipIcon class="h-4 w-4" />
+              <span class="text-xs">{{ transaction.media_count }}</span>
+            </div>
+          </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <Badge :type="transaction.type" />
+            <CommonBadge :type="transaction.type" />
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
             {{ transaction.account?.name || '-' }}
@@ -208,14 +229,14 @@ const getEditRoute = (transaction: Transaction) => {
           </td>
           <td v-if="showActions" class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" @click.stop>
             <div class="flex justify-end gap-2">
-              <IconButton
+              <FormsIconButton
                 :to="getEditRoute(transaction)"
                 :icon="PencilIcon"
                 label="Editar"
                 variant="secondary"
                 size="sm"
               />
-              <IconButton
+              <FormsIconButton
                 :icon="TrashIcon"
                 label="Eliminar"
                 variant="danger"

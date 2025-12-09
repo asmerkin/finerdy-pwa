@@ -2,24 +2,108 @@
 import { PlusIcon, ArrowsRightLeftIcon, CurrencyDollarIcon } from '@heroicons/vue/24/outline'
 import type { Transaction, Account, Category } from '~/types'
 
-definePageMeta({
-  middleware: 'auth',
+const route = useRoute()
+const router = useRouter()
+
+// Filter state from URL query params
+const filters = ref({
+  accounts: (route.query.accounts as string[] | undefined)?.map(Number) || [],
+  categories: (route.query.categories as string[] | undefined)?.map(Number) || [],
+  from: (route.query.from as string) || '',
+  until: (route.query.until as string) || '',
 })
 
-// Fetch transactions
-const { data, pending, refresh } = await useApi<{
-  data: Transaction[]
-  accounts: Account[]
-  categories: Category[]
-  referenceCurrency: string
-  workspaceUsersCount: number
-}>('/transactions')
+// Build query params for API
+const queryParams = computed(() => {
+  const params: Record<string, any> = {}
+  if (filters.value.accounts.length > 0) {
+    params.accounts = filters.value.accounts
+  }
+  if (filters.value.categories.length > 0) {
+    params.categories = filters.value.categories
+  }
+  if (filters.value.from) {
+    params.from = filters.value.from
+  }
+  if (filters.value.until) {
+    params.until = filters.value.until
+  }
+  return params
+})
 
-const transactions = computed(() => data.value?.data || [])
-const accounts = computed(() => data.value?.accounts || [])
-const categories = computed(() => data.value?.categories || [])
-const referenceCurrency = computed(() => data.value?.referenceCurrency || 'USD')
-const showCreatedBy = computed(() => (data.value?.workspaceUsersCount || 1) > 1)
+// Fetch transactions with filters
+const { data, pending, refresh } = await useApi<{
+  transactions: Transaction[]
+}>('/transactions', {
+  params: queryParams,
+})
+
+// Fetch accounts and categories for filter dropdowns
+const { data: accountsData } = await useApi<{ accounts: Account[] }>('/accounts')
+const { data: categoriesData } = await useApi<{ categories: Category[] }>('/categories')
+
+const transactions = computed(() => data.value?.transactions || [])
+const accounts = computed(() => accountsData.value?.accounts || [])
+const categories = computed(() => categoriesData.value?.categories || [])
+
+const hasActiveFilters = computed(() => {
+  return (
+    filters.value.accounts.length > 0
+    || filters.value.categories.length > 0
+    || filters.value.from
+    || filters.value.until
+  )
+})
+
+const handleFiltersApply = () => {
+  // Update URL with filters
+  const query: Record<string, any> = {}
+  if (filters.value.accounts.length > 0) {
+    query.accounts = filters.value.accounts.map(String)
+  }
+  if (filters.value.categories.length > 0) {
+    query.categories = filters.value.categories.map(String)
+  }
+  if (filters.value.from) {
+    query.from = filters.value.from
+  }
+  if (filters.value.until) {
+    query.until = filters.value.until
+  }
+
+  router.push({ query })
+  refresh()
+}
+
+const handleFiltersClear = () => {
+  router.push({ query: {} })
+  refresh()
+}
+
+const removeFilter = (filterKey: string, valueId?: number) => {
+  if (valueId !== undefined) {
+    // Remove specific value from array
+    const key = filterKey as 'accounts' | 'categories'
+    filters.value[key] = filters.value[key].filter(id => id !== valueId)
+  }
+  else {
+    // Remove date filter
+    const key = filterKey as 'from' | 'until'
+    filters.value[key] = ''
+  }
+
+  handleFiltersApply()
+}
+
+const clearAllFilters = () => {
+  filters.value = {
+    accounts: [],
+    categories: [],
+    from: '',
+    until: '',
+  }
+  handleFiltersClear()
+}
 
 const handleDelete = () => {
   refresh()
@@ -33,19 +117,19 @@ const handleDelete = () => {
         Transacciones
       </h2>
       <div class="flex flex-wrap gap-2">
-        <IconButton
+        <FormsIconButton
           to="/transactions/create"
           :icon="PlusIcon"
           label="Nueva"
           variant="primary"
         />
-        <IconButton
+        <FormsIconButton
           to="/transactions/transfer/create"
           :icon="ArrowsRightLeftIcon"
           label="Transferencia"
           variant="secondary"
         />
-        <IconButton
+        <FormsIconButton
           to="/transactions/exchange/create"
           :icon="CurrencyDollarIcon"
           label="Cambio"
@@ -54,32 +138,51 @@ const handleDelete = () => {
       </div>
     </div>
 
+    <!-- Filters -->
+    <FiltersTransactionFilters
+      v-model="filters"
+      :accounts="accounts"
+      :categories="categories"
+      @apply="handleFiltersApply"
+      @clear="handleFiltersClear"
+    />
+
+    <!-- Active Filter Pills -->
+    <FiltersFilterPills
+      v-if="hasActiveFilters"
+      :filters="filters"
+      :accounts="accounts"
+      :categories="categories"
+      @remove="removeFilter"
+      @clear-all="clearAllFilters"
+    />
+
     <!-- Loading state -->
     <div v-if="pending" class="flex justify-center py-12">
-      <LoadingSpinner size="lg" />
+      <CommonLoadingSpinner size="lg" />
     </div>
 
     <!-- Empty state -->
-    <Card v-else-if="transactions.length === 0" title="Sin transacciones">
+    <CommonCard v-else-if="transactions.length === 0" title="Sin transacciones">
       <p class="text-gray-600">
-        No hay transacciones registradas. ¡Crea tu primera transacción!
+        {{ hasActiveFilters ? 'No hay transacciones con los filtros seleccionados.' : 'No hay transacciones registradas. Crea tu primera transaccion!' }}
       </p>
-      <div class="mt-4">
-        <FormButton to="/transactions/create" variant="primary">
-          Nueva Transacción
-        </FormButton>
+      <div v-if="!hasActiveFilters" class="mt-4">
+        <FormsFormButton to="/transactions/create" variant="primary">
+          Nueva Transaccion
+        </FormsFormButton>
       </div>
-    </Card>
+    </CommonCard>
 
     <!-- Transactions table -->
-    <Card v-else>
-      <TransactionsTable
+    <CommonCard v-else>
+      <TablesTransactionsTable
         :transactions="transactions"
-        :reference-currency="referenceCurrency"
-        :show-created-by="showCreatedBy"
-        :show-reference-amount="false"
         @delete="handleDelete"
       />
-    </Card>
+    </CommonCard>
+
+    <!-- Floating Action Button -->
+    <NavigationFloatingActionButton />
   </div>
 </template>

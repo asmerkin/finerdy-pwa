@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import type { User, Workspace, WorkspaceListItem } from '~/types'
 
+const TOKEN_KEY = 'finerdy_token'
+
 export const useAuthStore = defineStore('auth', () => {
   const config = useRuntimeConfig()
   const apiBase = config.public.apiBase
@@ -9,28 +11,58 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const workspace = ref<Workspace | null>(null)
   const workspaces = ref<WorkspaceListItem[]>([])
+  const token = ref<string | null>(null)
   const isLoading = ref(false)
-  const isAuthenticated = computed(() => !!user.value)
+  const isAuthenticated = computed(() => !!token.value && !!user.value)
 
-  // Get CSRF cookie from Sanctum
-  async function getCsrfCookie() {
-    await $fetch(`${apiBase}/sanctum/csrf-cookie`, {
-      credentials: 'include',
-    })
+  // Initialize token from localStorage
+  function initToken() {
+    if (import.meta.client) {
+      token.value = localStorage.getItem(TOKEN_KEY)
+    }
+  }
+
+  // Save token to localStorage
+  function setToken(newToken: string | null) {
+    token.value = newToken
+    if (import.meta.client) {
+      if (newToken) {
+        localStorage.setItem(TOKEN_KEY, newToken)
+      } else {
+        localStorage.removeItem(TOKEN_KEY)
+      }
+    }
+  }
+
+  // Build headers with Bearer token
+  function buildHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    }
+    if (token.value) {
+      headers['Authorization'] = `Bearer ${token.value}`
+    }
+    return headers
   }
 
   // Login
   async function login(email: string, password: string) {
     isLoading.value = true
     try {
-      await getCsrfCookie()
-
-      await $fetch(`${apiBase}/login`, {
+      const response = await $fetch<{
+        token: string
+        user: { id: number; name: string; email: string }
+      }>(`${apiBase}/api/login`, {
         method: 'POST',
-        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
         body: { email, password },
       })
 
+      setToken(response.token)
       await fetchUser()
       return { success: true }
     }
@@ -54,14 +86,19 @@ export const useAuthStore = defineStore('auth', () => {
   }) {
     isLoading.value = true
     try {
-      await getCsrfCookie()
-
-      await $fetch(`${apiBase}/register`, {
+      const response = await $fetch<{
+        token: string
+        user: { id: number; name: string; email: string }
+      }>(`${apiBase}/api/register`, {
         method: 'POST',
-        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
         body: data,
       })
 
+      setToken(response.token)
       await fetchUser()
       return { success: true }
     }
@@ -79,12 +116,16 @@ export const useAuthStore = defineStore('auth', () => {
   // Logout
   async function logout() {
     try {
-      await $fetch(`${apiBase}/logout`, {
+      await $fetch(`${apiBase}/api/logout`, {
         method: 'POST',
-        credentials: 'include',
+        headers: buildHeaders(),
       })
     }
+    catch {
+      // Ignore errors - token might already be invalid
+    }
     finally {
+      setToken(null)
       user.value = null
       workspace.value = null
       workspaces.value = []
@@ -94,13 +135,17 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Fetch current user
   async function fetchUser() {
+    if (!token.value) {
+      return false
+    }
+
     try {
       const response = await $fetch<{
         user: User
         workspace: Workspace
         workspaces: WorkspaceListItem[]
       }>(`${apiBase}/api/user`, {
-        credentials: 'include',
+        headers: buildHeaders(),
       })
 
       user.value = response.user
@@ -110,6 +155,8 @@ export const useAuthStore = defineStore('auth', () => {
       return true
     }
     catch {
+      // Token is invalid, clear it
+      setToken(null)
       user.value = null
       workspace.value = null
       workspaces.value = []
@@ -122,7 +169,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await $fetch(`${apiBase}/api/workspace/switch`, {
         method: 'POST',
-        credentials: 'include',
+        headers: buildHeaders(),
         body: { workspace_id: workspaceId },
       })
 
@@ -142,11 +189,14 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     workspace,
     workspaces,
+    token,
     isLoading,
     isAuthenticated,
 
     // Actions
-    getCsrfCookie,
+    initToken,
+    setToken,
+    buildHeaders,
     login,
     register,
     logout,
