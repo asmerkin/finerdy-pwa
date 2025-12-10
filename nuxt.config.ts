@@ -8,6 +8,22 @@ export default defineNuxtConfig({
   // SPA mode via routeRules (avoids unhead bug with ssr:false)
   ssr: false,
 
+  // Generate static routes for SPA fallback
+  nitro: {
+    prerender: {
+      failOnError: false,
+      crawlLinks: true,
+      routes: ['/'],
+    },
+  },
+
+  // Router configuration for SPA
+  router: {
+    options: {
+      hashMode: false,
+    },
+  },
+
   modules: [
     '@pinia/nuxt',
     '@vite-pwa/nuxt',
@@ -108,6 +124,7 @@ export default defineNuxtConfig({
 
   // App configuration
   app: {
+    baseURL: '/',
     head: {
       title: 'Finerdy',
       meta: [
