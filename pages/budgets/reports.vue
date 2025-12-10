@@ -108,7 +108,7 @@ const summary = computed(() => data.value?.summary || { total_budgeted: 0, total
           <div
             v-for="item in report"
             :key="item.budget_id"
-            class="border rounded-lg p-4"
+            class="border border-gray-200 rounded-lg p-4"
           >
             <div class="flex justify-between items-start mb-3">
               <div>
@@ -143,34 +143,34 @@ const summary = computed(() => data.value?.summary || { total_budgeted: 0, total
 
         <!-- Desktop Table -->
         <div class="hidden lg:block overflow-x-auto">
-          <table class="min-w-full">
-            <thead>
-              <tr class="border-b">
-                <th class="text-left py-3 px-4">{{ t('budgets.category') }}</th>
-                <th class="text-left py-3 px-4">{{ t('budgets.budget') }}</th>
-                <th class="text-right py-3 px-4">{{ t('budgets.budgeted') }}</th>
-                <th class="text-right py-3 px-4">{{ t('budgets.spent') }}</th>
-                <th class="text-right py-3 px-4">{{ t('budgets.difference') }}</th>
-                <th class="text-left py-3 px-4">{{ t('budgets.progress') }}</th>
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.category') }}</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.budget') }}</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.budgeted') }}</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.spent') }}</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.difference') }}</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.progress') }}</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="bg-white divide-y divide-gray-200">
               <tr
                 v-for="item in report"
                 :key="item.budget_id"
-                class="border-b hover:bg-gray-50 transition-colors"
+                class="hover:bg-gray-50"
               >
-                <td class="py-3 px-4">{{ item.category_name }}</td>
-                <td class="py-3 px-4">{{ item.budget_name }}</td>
-                <td class="py-3 px-4 text-right font-mono">{{ formatMoney(item.budgeted) }}</td>
-                <td class="py-3 px-4 text-right font-mono">{{ formatMoney(item.spent) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.category_name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ item.budget_name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-mono text-gray-900">{{ formatMoney(item.budgeted) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-mono text-gray-500">{{ formatMoney(item.spent) }}</td>
                 <td
-                  class="py-3 px-4 text-right font-mono"
+                  class="px-6 py-4 whitespace-nowrap text-right text-sm font-mono"
                   :class="item.difference >= 0 ? 'text-success-600' : 'text-danger-600'"
                 >
                   {{ item.difference >= 0 ? '+' : '' }}{{ formatMoney(item.difference) }}
                 </td>
-                <td class="py-3 px-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                   <BudgetsBudgetProgressBar :percentage="item.percentage" size="sm" />
                 </td>
               </tr>

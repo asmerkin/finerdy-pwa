@@ -16,7 +16,7 @@ const emit = defineEmits<{
 }>()
 
 const { formatMoney } = useMoney()
-const api = useApiMutation()
+const { del, post } = useApiMutation()
 
 const showConfirmDialog = ref(false)
 const confirmAction = ref<'delete' | 'archive' | 'unarchive'>('delete')
@@ -60,15 +60,15 @@ const handleConfirm = async () => {
   try {
     switch (confirmAction.value) {
       case 'delete':
-        await api.del(`/budgets/${selectedBudget.value.id}`)
+        await del(`/budgets/${selectedBudget.value.id}`)
         emit('delete')
         break
       case 'archive':
-        await api.post(`/budgets/${selectedBudget.value.id}/archive`)
+        await post(`/budgets/${selectedBudget.value.id}/archive`)
         emit('archive')
         break
       case 'unarchive':
-        await api.post(`/budgets/${selectedBudget.value.id}/unarchive`)
+        await post(`/budgets/${selectedBudget.value.id}/unarchive`)
         emit('unarchive')
         break
     }
@@ -90,7 +90,7 @@ const handleConfirm = async () => {
     <div
       v-for="budget in budgets"
       :key="budget.id"
-      class="bg-white border rounded-lg p-4"
+      class="bg-white border border-gray-200 rounded-lg p-4"
     >
       <div class="flex justify-between items-start mb-3">
         <div class="flex-1">
@@ -123,7 +123,7 @@ const handleConfirm = async () => {
       </div>
 
       <!-- Actions -->
-      <div class="flex gap-2 pt-3 border-t">
+      <div class="flex gap-2 pt-3 border-t border-gray-200">
         <FormsIconButton
           v-if="!showArchived"
           :to="`/budgets/${budget.id}/edit`"
@@ -161,58 +161,58 @@ const handleConfirm = async () => {
 
   <!-- Desktop Table -->
   <div class="hidden lg:block overflow-x-auto">
-    <table class="min-w-full">
+    <table class="min-w-full divide-y divide-gray-200">
       <thead>
-        <tr class="border-b">
-          <th class="text-left py-3 px-4">{{ t('common.name') }}</th>
-          <th class="text-left py-3 px-4">{{ t('budgets.category') }}</th>
-          <th class="text-left py-3 px-4">{{ t('common.amount') }}</th>
-          <th class="text-left py-3 px-4">{{ t('budgets.period') }}</th>
-          <th v-if="!showArchived" class="text-right py-3 px-4">{{ t('budgets.spent') }}</th>
-          <th v-if="!showArchived" class="text-right py-3 px-4">{{ t('budgets.remaining') }}</th>
-          <th v-if="!showArchived" class="text-left py-3 px-4">{{ t('budgets.progress') }}</th>
-          <th v-if="showArchived" class="text-left py-3 px-4">{{ t('common.archived') }}</th>
-          <th class="text-right py-3 px-4">{{ t('common.actions') }}</th>
+        <tr class="bg-gray-50">
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('common.name') }}</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.category') }}</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('common.amount') }}</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.period') }}</th>
+          <th v-if="!showArchived" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.spent') }}</th>
+          <th v-if="!showArchived" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.remaining') }}</th>
+          <th v-if="!showArchived" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('budgets.progress') }}</th>
+          <th v-if="showArchived" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('common.archived') }}</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('common.actions') }}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="bg-white divide-y divide-gray-200">
         <tr
           v-for="budget in budgets"
           :key="budget.id"
-          class="border-b hover:bg-gray-50 transition-colors"
+          class="hover:bg-gray-50"
         >
-          <td class="py-3 px-4 font-semibold">{{ budget.name }}</td>
-          <td class="py-3 px-4">{{ budget.category?.name }}</td>
-          <td class="py-3 px-4 font-mono">{{ formatMoney(budget.amount, budget.currency) }}</td>
-          <td class="py-3 px-4">
+          <td class="px-6 py-4 whitespace-nowrap font-semibold text-sm text-gray-900">{{ budget.name }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ budget.category?.name }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">{{ formatMoney(budget.amount, budget.currency) }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
               {{ budget.period_label }}
             </span>
           </td>
-          <td v-if="!showArchived" class="py-3 px-4 text-right font-mono">
+          <td v-if="!showArchived" class="px-6 py-4 whitespace-nowrap text-right text-sm font-mono text-gray-500">
             {{ formatMoney(budget.current_spending, budget.currency) }}
           </td>
           <td
             v-if="!showArchived"
-            class="py-3 px-4 text-right font-mono"
+            class="px-6 py-4 whitespace-nowrap text-right text-sm font-mono"
             :class="budget.is_exceeded ? 'text-danger-600' : 'text-success-600'"
           >
             {{ formatMoney(budget.remaining, budget.currency) }}
           </td>
-          <td v-if="!showArchived" class="py-3 px-4">
+          <td v-if="!showArchived" class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center gap-2">
               <div class="flex-1">
                 <BudgetsBudgetProgressBar :percentage="budget.percentage_used" :show-label="false" size="sm" />
               </div>
-              <span class="text-xs font-semibold w-12 text-right">
+              <span class="text-xs font-semibold w-12 text-right text-gray-500">
                 {{ budget.percentage_used.toFixed(0) }}%
               </span>
             </div>
           </td>
-          <td v-if="showArchived" class="py-3 px-4 text-sm text-gray-500">
+          <td v-if="showArchived" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
             {{ budget.archived_at }}
           </td>
-          <td class="py-3 px-4 text-right">
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
             <div class="flex gap-1 justify-end">
               <FormsIconButton
                 v-if="!showArchived"
@@ -254,12 +254,12 @@ const handleConfirm = async () => {
 
   <!-- Confirm Dialog -->
   <CommonConfirmDialog
-    v-model:show="showConfirmDialog"
+    :open="showConfirmDialog"
     :title="confirmTitle"
     :message="confirmMessage"
     :confirm-text="t('common.confirm')"
     :cancel-text="t('common.cancel')"
-    :loading="isProcessing"
     @confirm="handleConfirm"
+    @cancel="showConfirmDialog = false"
   />
 </template>

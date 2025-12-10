@@ -50,7 +50,7 @@ const handleClick = (e: MouseEvent) => emit('click', e)
     :class="[
       variantClasses[variant],
       sizeClasses[size],
-      'inline-flex items-center font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors',
+      'inline-flex items-center font-medium rounded-md focus:outline-none transition-colors cursor-pointer',
     ]"
   >
     <component :is="icon" :class="iconSizes[size]" />
@@ -62,7 +62,7 @@ const handleClick = (e: MouseEvent) => emit('click', e)
     :class="[
       variantClasses[variant],
       sizeClasses[size],
-      'inline-flex items-center font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors',
+      'inline-flex items-center font-medium rounded-md focus:outline-none transition-colors cursor-pointer',
     ]"
     @click="handleClick"
   >

@@ -2,7 +2,7 @@
 import type { Category } from '~/types'
 
 const { t } = useI18n()
-const api = useApiMutation()
+const { post } = useApiMutation()
 const auth = useAuthStore()
 
 const workspaceCurrency = computed(() => auth.workspace?.default_currency || 'USD')
@@ -44,10 +44,10 @@ const handleSubmit = async () => {
   errors.value = {}
 
   try {
-    await api.post('/budgets', {
+    await post('/budgets', {
       name: form.name,
-      category_id: form.category_id,
-      amount: form.amount,
+      category_id: Number(form.category_id),
+      amount: parseFloat(form.amount),
       period: form.period,
       start_date: form.period === 'once' ? form.start_date : null,
       end_date: form.period === 'once' ? form.end_date : null,
@@ -115,7 +115,7 @@ const handleSubmit = async () => {
         />
 
         <!-- Advanced Settings - Solo para período "once" -->
-        <div v-if="form.period === 'once'" class="border-t pt-4">
+        <div v-if="form.period === 'once'" class="border-t border-gray-200 pt-4">
           <h3 class="text-sm font-semibold mb-3 text-gray-700">
             {{ t('budgets.budgetDates') }}
           </h3>
@@ -143,7 +143,7 @@ const handleSubmit = async () => {
         </div>
 
         <!-- Actions -->
-        <div class="flex gap-2 justify-end pt-4 border-t">
+        <div class="flex gap-2 justify-end pt-4 border-t border-gray-200">
           <FormsFormButton
             type="button"
             variant="secondary"

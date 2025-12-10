@@ -3,7 +3,7 @@ import type { Category, Budget } from '~/types'
 
 const { t } = useI18n()
 const route = useRoute()
-const api = useApiMutation()
+const { put } = useApiMutation()
 const auth = useAuthStore()
 
 const budgetId = route.params.id as string
@@ -65,10 +65,10 @@ const handleSubmit = async () => {
   errors.value = {}
 
   try {
-    await api.put(`/budgets/${budgetId}`, {
+    await put(`/budgets/${budgetId}`, {
       name: form.name,
-      category_id: form.category_id,
-      amount: form.amount,
+      category_id: Number(form.category_id),
+      amount: parseFloat(form.amount),
       period: form.period,
       start_date: form.period === 'once' ? form.start_date : null,
       end_date: form.period === 'once' ? form.end_date : null,
@@ -141,7 +141,7 @@ const handleSubmit = async () => {
           />
 
           <!-- Advanced Settings - Solo para período "once" -->
-          <div v-if="form.period === 'once'" class="border-t pt-4">
+          <div v-if="form.period === 'once'" class="border-t border-gray-200 pt-4">
             <h3 class="text-sm font-semibold mb-3 text-gray-700">
               {{ t('budgets.budgetDates') }}
             </h3>
@@ -169,7 +169,7 @@ const handleSubmit = async () => {
           </div>
 
           <!-- Actions -->
-          <div class="flex gap-2 justify-end pt-4 border-t">
+          <div class="flex gap-2 justify-end pt-4 border-t border-gray-200">
             <FormsFormButton
               type="button"
               variant="secondary"
