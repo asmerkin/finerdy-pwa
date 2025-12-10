@@ -61,6 +61,7 @@ export default defineNuxtConfig({
   pwa: {
     registerType: 'autoUpdate',
     manifest: {
+      id: '/',
       name: 'Finerdy',
       short_name: 'Finerdy',
       description: 'Personal finance management',
@@ -68,6 +69,7 @@ export default defineNuxtConfig({
       background_color: '#f9fafb',
       display: 'standalone',
       orientation: 'portrait',
+      scope: '/',
       start_url: '/',
       icons: [
         {
@@ -155,7 +157,7 @@ export default defineNuxtConfig({
       title: 'Finerdy',
       meta: [
         { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
         { name: 'description', content: 'Personal finance management' },
         { name: 'theme-color', content: '#ef4444' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
