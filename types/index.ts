@@ -72,6 +72,7 @@ export interface Transaction {
   media_count?: number
   account?: Account
   category?: Category | null
+  budget?: Budget | null
   related?: {
     id: number
     workspace_id: number
@@ -91,17 +92,27 @@ export interface Transaction {
 }
 
 // Budget types
-export type BudgetPeriod = 'monthly' | 'quarterly' | 'yearly'
+export type BudgetPeriod = 'monthly' | 'biweekly' | 'quarterly' | 'yearly' | 'once'
 
 export interface Budget {
   id: number
   name: string
-  amount: number
+  amount: number | string
+  category_id: number
+  category?: Category
   period: BudgetPeriod
-  workspace_id: number
-  categories?: Category[]
-  created_at: string
-  updated_at: string
+  period_label: string
+  start_date?: string | null
+  end_date?: string | null
+  current_spending: number
+  remaining: number
+  percentage_used: number
+  is_exceeded: boolean
+  currency: string
+  archived_at?: string | null
+  workspace_id?: number
+  created_at?: string
+  updated_at?: string
 }
 
 // API Response types

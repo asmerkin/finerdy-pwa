@@ -13,9 +13,16 @@ interface Category {
   name: string
 }
 
+interface Budget {
+  id: number
+  name: string
+  category?: Category
+}
+
 interface Filters {
   accounts: number[]
   categories: number[]
+  budgets: number[]
   from: string
   until: string
 }
@@ -24,6 +31,7 @@ const props = defineProps<{
   modelValue: Filters
   accounts: Account[]
   categories: Category[]
+  budgets: Budget[]
 }>()
 
 const emit = defineEmits<{
@@ -38,6 +46,7 @@ const hasActiveFilters = computed(() => {
   return (
     (props.modelValue.accounts && props.modelValue.accounts.length > 0)
     || (props.modelValue.categories && props.modelValue.categories.length > 0)
+    || (props.modelValue.budgets && props.modelValue.budgets.length > 0)
     || props.modelValue.from
     || props.modelValue.until
   )
@@ -47,6 +56,7 @@ const activeFiltersCount = computed(() => {
   let count = 0
   if (props.modelValue.accounts?.length > 0) count += props.modelValue.accounts.length
   if (props.modelValue.categories?.length > 0) count += props.modelValue.categories.length
+  if (props.modelValue.budgets?.length > 0) count += props.modelValue.budgets.length
   if (props.modelValue.from) count++
   if (props.modelValue.until) count++
   return count
@@ -55,6 +65,7 @@ const activeFiltersCount = computed(() => {
 const form = ref<Filters>({
   categories: props.modelValue.categories || [],
   accounts: props.modelValue.accounts || [],
+  budgets: props.modelValue.budgets || [],
   from: props.modelValue.from || '',
   until: props.modelValue.until || '',
 })
@@ -64,6 +75,7 @@ watch(() => props.modelValue, (newFilters) => {
   form.value = {
     categories: newFilters.categories || [],
     accounts: newFilters.accounts || [],
+    budgets: newFilters.budgets || [],
     from: newFilters.from || '',
     until: newFilters.until || '',
   }
@@ -86,12 +98,21 @@ const clearFilters = () => {
   form.value = {
     categories: [],
     accounts: [],
+    budgets: [],
     from: '',
     until: '',
   }
   emit('update:modelValue', { ...form.value })
   emit('clear')
 }
+
+// Create budget options with category name for clarity
+const budgetOptions = computed(() => {
+  return props.budgets.map(b => ({
+    id: b.id,
+    name: b.category ? `${b.name} (${b.category.name})` : b.name,
+  }))
+})
 </script>
 
 <template>
@@ -127,7 +148,7 @@ const clearFilters = () => {
         <FiltersDateRangePresets v-model="dateRange" />
 
         <!-- Filters Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
               {{ t('filters.from') }}
@@ -163,6 +184,14 @@ const clearFilters = () => {
             :options="categories"
             :label="t('filters.categories')"
             :placeholder="t('filters.allCategories')"
+            :all-text="t('common.all')"
+          />
+
+          <FiltersMultiSelectListbox
+            v-model="form.budgets"
+            :options="budgetOptions"
+            :label="t('filters.budgets')"
+            :placeholder="t('filters.allBudgets')"
             :all-text="t('common.all')"
           />
         </div>

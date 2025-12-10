@@ -1,32 +1,37 @@
 <script setup lang="ts">
 import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
-import type { Account, Category } from '~/types'
+import type { Account, Category, Budget } from '~/types'
 
+const { t } = useI18n()
 const router = useRouter()
 const { post } = useApiMutation()
 
-// Fetch accounts and categories
+// Fetch accounts, categories and budgets
 const { data: accountsData } = await useApi<{ accounts: Account[] }>('/accounts')
 const { data: categoriesData } = await useApi<{ categories: Category[] }>('/categories')
+const { data: budgetsData } = await useApi<{ budgets: Budget[] }>('/budgets')
 
 const accounts = computed(() => accountsData.value?.accounts || [])
 const categories = computed(() => categoriesData.value?.categories || [])
+const budgets = computed(() => budgetsData.value?.budgets || [])
 
 const form = reactive({
   type: 'outcome',
   account_id: '',
   category_id: '',
+  budget_id: '',
   amount: '',
   description: '',
   happened_at: '',
+  assignment_type: 'category' as 'category' | 'budget',
 })
 
 const errors = ref<Record<string, string[]>>({})
 const isSubmitting = ref(false)
 
 const typeOptions = [
-  { value: 'income', label: 'Ingreso' },
-  { value: 'outcome', label: 'Gasto' },
+  { value: 'income', label: t('transactions.types.income') },
+  { value: 'outcome', label: t('transactions.types.expense') },
 ]
 
 const selectedAccount = computed(() =>
@@ -37,9 +42,51 @@ const accountOptions = computed(() =>
   accounts.value.map(a => ({ value: a.id, label: `${a.name} (${a.currency})` })),
 )
 
+// Filter categories based on transaction type
+const filteredCategories = computed(() => {
+  return categories.value.filter(cat => cat.transaction_type === form.type)
+})
+
 const categoryOptions = computed(() =>
-  categories.value.map(c => ({ value: c.id, label: c.name })),
+  filteredCategories.value.map(c => ({ value: c.id, label: c.name })),
 )
+
+// Filter budgets (only for outcome transactions)
+const filteredBudgets = computed(() => {
+  if (form.type !== 'outcome') return []
+  return budgets.value.filter(budget => budget.category?.transaction_type === 'outcome')
+})
+
+const budgetOptions = computed(() =>
+  filteredBudgets.value.map(b => ({ value: b.id, label: `${b.name} (${b.category?.name})` })),
+)
+
+// Reset category/budget when type changes
+watch(() => form.type, () => {
+  form.category_id = ''
+  form.budget_id = ''
+  form.assignment_type = 'category'
+})
+
+// When budget is selected, auto-assign its category
+watch(() => form.budget_id, (budgetId) => {
+  if (budgetId && form.assignment_type === 'budget') {
+    const budget = budgets.value.find(b => b.id === Number(budgetId))
+    if (budget) {
+      form.category_id = String(budget.category_id)
+    }
+  }
+})
+
+// Clear budget_id when switching to category mode
+watch(() => form.assignment_type, (type) => {
+  if (type === 'category') {
+    form.budget_id = ''
+  }
+  else if (type === 'budget') {
+    form.category_id = ''
+  }
+})
 
 const handleSubmit = async () => {
   isSubmitting.value = true
@@ -47,10 +94,13 @@ const handleSubmit = async () => {
 
   try {
     await post('/transactions', {
-      ...form,
+      type: form.type,
       account_id: Number(form.account_id),
       category_id: form.category_id ? Number(form.category_id) : null,
+      budget_id: form.budget_id ? Number(form.budget_id) : null,
       amount: parseFloat(form.amount),
+      description: form.description || null,
+      happened_at: form.happened_at,
     })
     router.push('/transactions')
   }
@@ -73,7 +123,7 @@ const handleSubmit = async () => {
         <ChevronLeftIcon class="h-6 w-6" />
       </NuxtLink>
       <h2 class="text-2xl font-bold leading-7 text-gray-900">
-        Nueva Transacción
+        {{ t('transactions.newTransaction') }}
       </h2>
     </div>
 
@@ -81,7 +131,7 @@ const handleSubmit = async () => {
       <form class="space-y-6" @submit.prevent="handleSubmit">
         <FormsSelect
           v-model="form.type"
-          label="Tipo"
+          :label="t('transactions.type')"
           :options="typeOptions"
           :error="errors.type?.[0]"
           required
@@ -89,38 +139,90 @@ const handleSubmit = async () => {
 
         <FormsSelect
           v-model="form.account_id"
-          label="Cuenta"
+          :label="t('transactions.account')"
           :options="accountOptions"
           :error="errors.account_id?.[0]"
-          placeholder="Seleccionar cuenta"
+          :placeholder="t('common.select')"
           required
         />
 
+        <!-- Category selector (for income) -->
         <FormsSelect
+          v-if="form.type === 'income'"
           v-model="form.category_id"
-          label="Categoría"
+          :label="t('transactions.category')"
           :options="categoryOptions"
           :error="errors.category_id?.[0]"
-          placeholder="Seleccionar categoría (opcional)"
+          :placeholder="t('common.select')"
         />
+
+        <!-- Category or Budget selector (for outcome) -->
+        <div v-if="form.type === 'outcome'" class="space-y-3">
+          <!-- Assignment type radio buttons (only show if budgets exist) -->
+          <div v-if="filteredBudgets.length > 0">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ t('transactions.assignTo') }}
+            </label>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input
+                  v-model="form.assignment_type"
+                  type="radio"
+                  value="category"
+                  class="text-primary-600 focus:ring-primary-500"
+                >
+                <span class="text-sm text-gray-700">{{ t('transactions.assignTypes.category') }}</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input
+                  v-model="form.assignment_type"
+                  type="radio"
+                  value="budget"
+                  class="text-primary-600 focus:ring-primary-500"
+                >
+                <span class="text-sm text-gray-700">{{ t('transactions.assignTypes.budget') }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Category selector -->
+          <FormsSelect
+            v-if="form.assignment_type === 'category'"
+            v-model="form.category_id"
+            :label="t('transactions.category')"
+            :options="categoryOptions"
+            :error="errors.category_id?.[0]"
+            :placeholder="t('common.select')"
+          />
+
+          <!-- Budget selector -->
+          <FormsSelect
+            v-if="form.assignment_type === 'budget'"
+            v-model="form.budget_id"
+            :label="t('transactions.budget')"
+            :options="budgetOptions"
+            :error="errors.budget_id?.[0]"
+            :placeholder="t('common.select')"
+          />
+        </div>
 
         <FormsMoneyInput
           v-model="form.amount"
-          label="Monto"
+          :label="t('common.amount')"
           :currency="selectedAccount?.currency"
           :error="errors.amount?.[0]"
         />
 
         <FormsTextarea
           v-model="form.description"
-          label="Descripción"
+          :label="t('common.description')"
           :error="errors.description?.[0]"
-          placeholder="Descripción opcional"
+          :placeholder="t('common.description')"
         />
 
         <FormsDatePicker
           v-model="form.happened_at"
-          label="Fecha y hora"
+          :label="t('transactions.dateTime')"
           :error="errors.happened_at?.[0]"
         />
 
@@ -130,7 +232,7 @@ const handleSubmit = async () => {
             :loading="isSubmitting"
             :disabled="isSubmitting"
           >
-            Crear Transacción
+            {{ t('transactions.createTransaction') }}
           </FormsFormButton>
         </div>
       </form>

@@ -2,8 +2,9 @@
 import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
 import type { Account } from '~/types'
 
+const { t } = useI18n()
 const router = useRouter()
-const { post } = useApiMutation()
+const { postForm } = useApiMutation()
 
 // Fetch accounts
 const { data: accountsData } = await useApi<{ accounts: Account[] }>('/accounts')
@@ -59,19 +60,28 @@ const destinationOptions = computed(() =>
   availableDestinationAccounts.value.map(a => ({ value: a.id, label: `${a.name} (${a.currency})` })),
 )
 
+// File handling
+const attachments = ref<File[]>([])
+
 const handleSubmit = async () => {
   isSubmitting.value = true
   errors.value = {}
 
   try {
-    await post('/transactions/exchange', {
-      origin_account_id: Number(form.origin_account_id),
-      destination_account_id: Number(form.destination_account_id),
-      origin_amount: parseFloat(form.origin_amount),
-      destination_amount: parseFloat(form.destination_amount),
-      description: form.description,
-      happened_at: form.happened_at,
+    const formData = new FormData()
+    formData.append('origin_account_id', form.origin_account_id)
+    formData.append('destination_account_id', form.destination_account_id)
+    formData.append('origin_amount', form.origin_amount)
+    formData.append('destination_amount', form.destination_amount)
+    formData.append('description', form.description || '')
+    formData.append('happened_at', form.happened_at)
+
+    // Add attachments
+    attachments.value.forEach((file) => {
+      formData.append('attachments[]', file)
     })
+
+    await postForm('/transactions/exchange', formData)
     router.push('/transactions')
   }
   catch (error: any) {
@@ -152,6 +162,13 @@ const handleSubmit = async () => {
           v-model="form.happened_at"
           label="Fecha y hora"
           :error="errors.happened_at?.[0]"
+        />
+
+        <FormsMultipleFileInput
+          v-model="attachments"
+          :label="t('transactions.attachments')"
+          :error="errors.attachments?.[0]"
+          :errors="errors"
         />
 
         <div class="flex justify-end">

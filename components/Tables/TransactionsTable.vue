@@ -122,6 +122,10 @@ const getEditRoute = (transaction: Transaction) => {
           <span class="text-xs text-gray-500">Categoría:</span>
           <span class="text-sm text-gray-700">{{ transaction.category?.name || '-' }}</span>
         </div>
+        <div v-if="transaction.budget" class="flex items-center gap-2">
+          <span class="text-xs text-gray-500">Presupuesto:</span>
+          <span class="text-sm text-gray-700">{{ transaction.budget.name }}</span>
+        </div>
         <div v-if="showCreatedBy && transaction.creator" class="flex items-center gap-2">
           <span class="text-xs text-gray-500">Creado por:</span>
           <span class="text-sm text-gray-700">{{ transaction.creator.name }}</span>
@@ -180,6 +184,9 @@ const getEditRoute = (transaction: Transaction) => {
             Categoría
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Presupuesto
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
             Descripción
           </th>
           <th v-if="showCreatedBy" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -217,6 +224,9 @@ const getEditRoute = (transaction: Transaction) => {
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
             {{ transaction.category?.name || '-' }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ transaction.budget?.name || '-' }}
           </td>
           <td class="px-6 py-4 text-sm text-gray-900">
             {{ transaction.description || '-' }}

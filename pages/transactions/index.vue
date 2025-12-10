@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PlusIcon, ArrowsRightLeftIcon, CurrencyDollarIcon } from '@heroicons/vue/24/outline'
-import type { Transaction, Account, Category } from '~/types'
+import type { Transaction, Account, Category, Budget } from '~/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -9,6 +9,7 @@ const router = useRouter()
 const filters = ref({
   accounts: (route.query.accounts as string[] | undefined)?.map(Number) || [],
   categories: (route.query.categories as string[] | undefined)?.map(Number) || [],
+  budgets: (route.query.budgets as string[] | undefined)?.map(Number) || [],
   from: (route.query.from as string) || '',
   until: (route.query.until as string) || '',
 })
@@ -21,6 +22,9 @@ const queryParams = computed(() => {
   }
   if (filters.value.categories.length > 0) {
     params.categories = filters.value.categories
+  }
+  if (filters.value.budgets.length > 0) {
+    params.budgets = filters.value.budgets
   }
   if (filters.value.from) {
     params.from = filters.value.from
@@ -38,18 +42,21 @@ const { data, pending, refresh } = await useApi<{
   params: queryParams,
 })
 
-// Fetch accounts and categories for filter dropdowns
+// Fetch accounts, categories, and budgets for filter dropdowns
 const { data: accountsData } = await useApi<{ accounts: Account[] }>('/accounts')
 const { data: categoriesData } = await useApi<{ categories: Category[] }>('/categories')
+const { data: budgetsData } = await useApi<{ budgets: Budget[] }>('/budgets')
 
 const transactions = computed(() => data.value?.transactions || [])
 const accounts = computed(() => accountsData.value?.accounts || [])
 const categories = computed(() => categoriesData.value?.categories || [])
+const budgets = computed(() => budgetsData.value?.budgets || [])
 
 const hasActiveFilters = computed(() => {
   return (
     filters.value.accounts.length > 0
     || filters.value.categories.length > 0
+    || filters.value.budgets.length > 0
     || filters.value.from
     || filters.value.until
   )
@@ -63,6 +70,9 @@ const handleFiltersApply = () => {
   }
   if (filters.value.categories.length > 0) {
     query.categories = filters.value.categories.map(String)
+  }
+  if (filters.value.budgets.length > 0) {
+    query.budgets = filters.value.budgets.map(String)
   }
   if (filters.value.from) {
     query.from = filters.value.from
@@ -83,7 +93,7 @@ const handleFiltersClear = () => {
 const removeFilter = (filterKey: string, valueId?: number) => {
   if (valueId !== undefined) {
     // Remove specific value from array
-    const key = filterKey as 'accounts' | 'categories'
+    const key = filterKey as 'accounts' | 'categories' | 'budgets'
     filters.value[key] = filters.value[key].filter(id => id !== valueId)
   }
   else {
@@ -99,6 +109,7 @@ const clearAllFilters = () => {
   filters.value = {
     accounts: [],
     categories: [],
+    budgets: [],
     from: '',
     until: '',
   }
@@ -143,6 +154,7 @@ const handleDelete = () => {
       v-model="filters"
       :accounts="accounts"
       :categories="categories"
+      :budgets="budgets"
       @apply="handleFiltersApply"
       @clear="handleFiltersClear"
     />
@@ -153,6 +165,7 @@ const handleDelete = () => {
       :filters="filters"
       :accounts="accounts"
       :categories="categories"
+      :budgets="budgets"
       @remove="removeFilter"
       @clear-all="clearAllFilters"
     />

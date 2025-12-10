@@ -10,6 +10,7 @@ import {
   UserCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CalculatorIcon,
 } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
@@ -50,11 +51,13 @@ const mainNavigation = computed(() => [
 
 const transactionNavigation = computed(() => [
   { name: 'Transacciones', to: '/transactions', icon: BanknotesIcon, active: isActive('/transactions') },
+  { name: 'Presupuestos', to: '/budgets', icon: CalculatorIcon, active: isActive('/budgets') },
 ])
 
 const reportsNavigation = computed(() => [
   { name: 'Estado Patrimonial', to: '/reports/balance-sheet', icon: DocumentTextIcon, active: isActive('/reports/balance-sheet') },
   { name: 'Estado de Resultados', to: '/reports/income-statement', icon: DocumentTextIcon, active: isActive('/reports/income-statement') },
+  { name: 'Presupuestos', to: '/budgets/reports', icon: CalculatorIcon, active: isActive('/budgets/reports') },
 ])
 
 const settingsNavigation = computed(() => [

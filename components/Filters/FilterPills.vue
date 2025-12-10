@@ -13,9 +13,16 @@ interface Category {
   name: string
 }
 
+interface Budget {
+  id: number
+  name: string
+  category?: Category
+}
+
 interface Filters {
   accounts: number[]
   categories: number[]
+  budgets: number[]
   from: string
   until: string
 }
@@ -24,6 +31,7 @@ const props = defineProps<{
   filters: Filters
   accounts: Account[]
   categories: Category[]
+  budgets: Budget[]
 }>()
 
 const emit = defineEmits<{
@@ -37,6 +45,7 @@ const hasActiveFilters = computed(() => {
   return (
     (props.filters.accounts && props.filters.accounts.length > 0)
     || (props.filters.categories && props.filters.categories.length > 0)
+    || (props.filters.budgets && props.filters.budgets.length > 0)
     || props.filters.from
     || props.filters.until
   )
@@ -50,6 +59,11 @@ const getAccountName = (accountId: number): string => {
 const getCategoryName = (categoryId: number): string => {
   const category = props.categories.find(c => c.id == categoryId)
   return category ? category.name : t('filters.unknown')
+}
+
+const getBudgetName = (budgetId: number): string => {
+  const budget = props.budgets.find(b => b.id == budgetId)
+  return budget ? budget.name : t('filters.unknown')
 }
 
 const removePill = (filterKey: string, valueId?: number) => {
@@ -93,6 +107,22 @@ const clearAll = () => {
           type="button"
           class="hover:text-primary-600 transition-colors"
           @click="removePill('categories', categoryId)"
+        >
+          <XMarkIcon class="h-3 w-3" />
+        </button>
+      </span>
+
+      <!-- Budget Pills -->
+      <span
+        v-for="budgetId in filters.budgets"
+        :key="`budget-${budgetId}`"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200"
+      >
+        {{ t('filters.budget') }}: {{ getBudgetName(budgetId) }}
+        <button
+          type="button"
+          class="hover:text-primary-600 transition-colors"
+          @click="removePill('budgets', budgetId)"
         >
           <XMarkIcon class="h-3 w-3" />
         </button>
