@@ -54,7 +54,7 @@ const variantClasses: Record<Variant, { icon: string; button: string }> = {
         role="dialog"
         aria-modal="true"
       >
-        <div class="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
+        <div class="flex min-h-screen items-center justify-center px-4 py-4 text-center sm:block sm:p-0">
           <!-- Backdrop -->
           <div
             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"

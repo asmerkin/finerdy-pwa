@@ -48,6 +48,7 @@ const confirmMessage = computed(() => {
 })
 
 const openConfirmDialog = (budget: Budget, action: 'delete' | 'archive' | 'unarchive') => {
+  console.log('openConfirmDialog called', { budget, action })
   selectedBudget.value = budget
   confirmAction.value = action
   showConfirmDialog.value = true
@@ -132,29 +133,32 @@ const handleConfirm = async () => {
           variant="ghost"
           size="sm"
         />
-        <FormsIconButton
+        <button
           v-if="showArchived"
-          :icon="ArchiveBoxArrowDownIcon"
-          :label="t('budgets.unarchive')"
-          variant="secondary"
-          size="sm"
-          @click="openConfirmDialog(budget, 'unarchive')"
-        />
-        <FormsIconButton
+          type="button"
+          class="inline-flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium rounded-md text-gray-600 hover:bg-gray-100 cursor-pointer"
+          @click.stop="openConfirmDialog(budget, 'unarchive')"
+        >
+          <ArchiveBoxArrowDownIcon class="h-4 w-4" />
+          <span>{{ t('budgets.unarchive') }}</span>
+        </button>
+        <button
           v-if="!showArchived"
-          :icon="ArchiveBoxIcon"
-          :label="t('budgets.archive')"
-          variant="secondary"
-          size="sm"
-          @click="openConfirmDialog(budget, 'archive')"
-        />
-        <FormsIconButton
-          :icon="TrashIcon"
-          :label="t('common.delete')"
-          variant="danger"
-          size="sm"
-          @click="openConfirmDialog(budget, 'delete')"
-        />
+          type="button"
+          class="inline-flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium rounded-md text-gray-600 hover:bg-gray-100 cursor-pointer"
+          @click.stop="openConfirmDialog(budget, 'archive')"
+        >
+          <ArchiveBoxIcon class="h-4 w-4" />
+          <span>{{ t('budgets.archive') }}</span>
+        </button>
+        <button
+          type="button"
+          class="inline-flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium rounded-md text-danger-600 hover:bg-danger-50 cursor-pointer"
+          @click.stop="openConfirmDialog(budget, 'delete')"
+        >
+          <TrashIcon class="h-4 w-4" />
+          <span>{{ t('common.delete') }}</span>
+        </button>
       </div>
     </div>
   </div>
@@ -222,29 +226,32 @@ const handleConfirm = async () => {
                 variant="ghost"
                 size="sm"
               />
-              <FormsIconButton
+              <button
                 v-if="showArchived"
-                :icon="ArchiveBoxArrowDownIcon"
-                :label="t('budgets.unarchive')"
-                variant="secondary"
-                size="sm"
-                @click="openConfirmDialog(budget, 'unarchive')"
-              />
-              <FormsIconButton
+                type="button"
+                class="inline-flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium rounded-md text-gray-600 hover:bg-gray-100 cursor-pointer"
+                @click.stop="openConfirmDialog(budget, 'unarchive')"
+              >
+                <ArchiveBoxArrowDownIcon class="h-4 w-4" />
+                <span>{{ t('budgets.unarchive') }}</span>
+              </button>
+              <button
                 v-if="!showArchived"
-                :icon="ArchiveBoxIcon"
-                :label="t('budgets.archive')"
-                variant="secondary"
-                size="sm"
-                @click="openConfirmDialog(budget, 'archive')"
-              />
-              <FormsIconButton
-                :icon="TrashIcon"
-                :label="t('common.delete')"
-                variant="danger"
-                size="sm"
-                @click="openConfirmDialog(budget, 'delete')"
-              />
+                type="button"
+                class="inline-flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium rounded-md text-gray-600 hover:bg-gray-100 cursor-pointer"
+                @click.stop="openConfirmDialog(budget, 'archive')"
+              >
+                <ArchiveBoxIcon class="h-4 w-4" />
+                <span>{{ t('budgets.archive') }}</span>
+              </button>
+              <button
+                type="button"
+                class="inline-flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium rounded-md text-danger-600 hover:bg-danger-50 cursor-pointer"
+                @click.stop="openConfirmDialog(budget, 'delete')"
+              >
+                <TrashIcon class="h-4 w-4" />
+                <span>{{ t('common.delete') }}</span>
+              </button>
             </div>
           </td>
         </tr>
