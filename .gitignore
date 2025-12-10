@@ -26,3 +26,6 @@ logs
 # VS Code
 .vscode/*
 !.vscode/extensions.json
+
+# Sentry Config File
+.env.sentry-build-plugin

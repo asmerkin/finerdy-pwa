@@ -18,11 +18,7 @@ export default defineNuxtConfig({
     static: true,
   },
 
-  modules: [
-    '@pinia/nuxt',
-    '@vite-pwa/nuxt',
-    '@nuxtjs/i18n',
-  ],
+  modules: ['@pinia/nuxt', '@vite-pwa/nuxt', '@nuxtjs/i18n', '@sentry/nuxt/module'],
 
   // i18n configuration
   i18n: {
@@ -181,5 +177,14 @@ export default defineNuxtConfig({
         },
       ],
     },
+  },
+
+  sentry: {
+    org: 'andres-smerkin',
+    project: 'finerdy-pwa',
+  },
+
+  sourcemap: {
+    client: 'hidden',
   },
 })
