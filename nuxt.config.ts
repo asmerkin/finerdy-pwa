@@ -12,16 +12,10 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       failOnError: false,
-      crawlLinks: true,
+      crawlLinks: false,
       routes: ['/'],
     },
-  },
-
-  // Router configuration for SPA
-  router: {
-    options: {
-      hashMode: false,
-    },
+    static: true,
   },
 
   modules: [
@@ -95,8 +89,8 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
-      navigateFallback: '/index.html',
-      navigateFallbackDenylist: [/^\/api\//],
+      navigateFallback: '/',
+      navigateFallbackDenylist: [/^\/api\//, /^\/_nuxt\//],
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2,json}'],
       cleanupOutdatedCaches: true,
       runtimeCaching: [
