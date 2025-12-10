@@ -185,6 +185,8 @@
     "balance": "Balance",
     "createAccount": "Crear Cuenta",
     "updateAccount": "Actualizar Cuenta",
+    "saveChanges": "Guardar Cambios",
+    "currencyCannotChange": "La moneda no se puede modificar porque esta cuenta tiene transacciones",
     "deleteConfirm": "¿Estás seguro de que deseas eliminar esta cuenta? Esta acción no se puede deshacer."
   },
 
@@ -201,9 +203,12 @@
     "noIncomeCategories": "No hay categorías de ingresos",
     "noExpenseCategories": "No hay categorías de egresos",
     "name": "Nombre",
+    "namePlaceholder": "Ej: Comida, Transporte, Entretenimiento...",
     "transactionType": "Tipo de Transacción",
     "createCategory": "Crear Categoría",
     "updateCategory": "Actualizar Categoría",
+    "saveChanges": "Guardar Cambios",
+    "transactionTypeCannotChange": "El tipo de transacción no se puede modificar porque esta categoría tiene transacciones",
     "deleteConfirm": "¿Estás seguro de que deseas eliminar esta categoría? Esta acción no se puede deshacer.",
     "types": {
       "income": "Ingreso",

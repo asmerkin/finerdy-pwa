@@ -185,6 +185,8 @@
     "balance": "Balance",
     "createAccount": "Create Account",
     "updateAccount": "Update Account",
+    "saveChanges": "Save Changes",
+    "currencyCannotChange": "Currency cannot be modified because this account has transactions",
     "deleteConfirm": "Are you sure you want to delete this account? This action cannot be undone."
   },
 
@@ -201,9 +203,12 @@
     "noIncomeCategories": "No income categories",
     "noExpenseCategories": "No expense categories",
     "name": "Name",
+    "namePlaceholder": "E.g.: Food, Transport, Entertainment...",
     "transactionType": "Transaction Type",
     "createCategory": "Create Category",
     "updateCategory": "Update Category",
+    "saveChanges": "Save Changes",
+    "transactionTypeCannotChange": "Transaction type cannot be modified because this category has transactions",
     "deleteConfirm": "Are you sure you want to delete this category? This action cannot be undone.",
     "types": {
       "income": "Income",

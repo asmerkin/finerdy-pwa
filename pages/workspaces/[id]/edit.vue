@@ -19,7 +19,9 @@ interface Workspace {
   is_owner: boolean
 }
 
-const { data: workspaceData, pending } = await useApi<{ workspace: Workspace }>(`/api/workspaces/${workspaceId}`)
+const { data: workspaceData, pending } = await useApi<{ workspace: Workspace }>(`/workspaces/${workspaceId}`)
+
+const workspace = computed(() => (workspaceData.value as any)?.workspace as Workspace | undefined)
 
 const form = reactive({
   name: '',
@@ -28,21 +30,24 @@ const form = reactive({
 const errors = ref<Record<string, string[]>>({})
 const isSubmitting = ref(false)
 
-// Initialize form when data loads
-watch(workspaceData, (newData) => {
-  if (newData?.workspace) {
-    form.name = newData.workspace.name
-  }
-}, { immediate: true })
+// Initialize form immediately after data loads
+if (workspace.value) {
+  form.name = workspace.value.name
+}
 
-const workspace = computed(() => workspaceData.value?.workspace)
+// Watch for changes
+watch(workspace, (newWorkspace) => {
+  if (newWorkspace) {
+    form.name = newWorkspace.name
+  }
+})
 
 const handleSubmit = async () => {
   isSubmitting.value = true
   errors.value = {}
 
   try {
-    await put(`/api/workspaces/${workspaceId}`, form)
+    await put(`/workspaces/${workspaceId}`, form)
     await auth.fetchUser()
     router.push('/workspaces')
   }

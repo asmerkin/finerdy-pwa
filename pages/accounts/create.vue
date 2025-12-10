@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
+
 const router = useRouter()
 const { post } = useApiMutation()
 const auth = useAuthStore()
@@ -43,16 +45,16 @@ const handleSubmit = async () => {
 
 <template>
   <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <NuxtLink
+        to="/accounts"
+        class="p-1 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+      >
+        <ChevronLeftIcon class="h-6 w-6" />
+      </NuxtLink>
       <h2 class="text-2xl font-bold leading-7 text-gray-900">
         Nueva Cuenta
       </h2>
-      <NuxtLink
-        to="/accounts"
-        class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-      >
-        Volver
-      </NuxtLink>
     </div>
 
     <CommonCard>

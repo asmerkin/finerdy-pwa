@@ -30,6 +30,7 @@ export interface Account {
   currency: string
   balance: string // Decimal formatted string from API (e.g., "8240.00")
   workspace_id: number
+  transactions_count?: number
   created_at: string
   updated_at: string
 }
@@ -43,6 +44,7 @@ export interface Category {
   transaction_type: CategoryTransactionType
   reference_balance?: string
   workspace_id: number
+  transactions_count?: number
   created_at: string
   updated_at: string
 }

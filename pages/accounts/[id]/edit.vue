@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
 import type { Account } from '~/types'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const { put } = useApiMutation()
@@ -10,33 +12,40 @@ const accountId = route.params.id
 // Fetch account data
 const { data, pending } = await useApi<{ account: Account }>(`/accounts/${accountId}`)
 
+const account = computed(() => (data.value as any)?.account as Account | undefined)
+
 const form = reactive({
   name: '',
   currency: '',
 })
 
+// Check if account has transactions
+const hasTransactions = computed(() => {
+  return !!(account.value?.transactions_count && account.value.transactions_count > 0)
+})
+
 // Initialize form when data loads
-watch(data, (newData) => {
-  if (newData?.account) {
-    form.name = newData.account.name
-    form.currency = newData.account.currency
+watch(account, (newAccount) => {
+  if (newAccount) {
+    form.name = newAccount.name
+    form.currency = newAccount.currency
   }
 }, { immediate: true })
 
 const errors = ref<Record<string, string[]>>({})
 const isSubmitting = ref(false)
 
-// Currency options
+// Currency options (these are currency codes, no need to translate)
 const currencies = [
-  { value: 'USD', label: 'USD - Dólar estadounidense' },
+  { value: 'USD', label: 'USD - US Dollar' },
   { value: 'EUR', label: 'EUR - Euro' },
-  { value: 'ARS', label: 'ARS - Peso argentino' },
-  { value: 'MXN', label: 'MXN - Peso mexicano' },
-  { value: 'CLP', label: 'CLP - Peso chileno' },
-  { value: 'COP', label: 'COP - Peso colombiano' },
-  { value: 'BRL', label: 'BRL - Real brasileño' },
-  { value: 'GBP', label: 'GBP - Libra esterlina' },
-  { value: 'JPY', label: 'JPY - Yen japonés' },
+  { value: 'ARS', label: 'ARS - Argentine Peso' },
+  { value: 'MXN', label: 'MXN - Mexican Peso' },
+  { value: 'CLP', label: 'CLP - Chilean Peso' },
+  { value: 'COP', label: 'COP - Colombian Peso' },
+  { value: 'BRL', label: 'BRL - Brazilian Real' },
+  { value: 'GBP', label: 'GBP - British Pound' },
+  { value: 'JPY', label: 'JPY - Japanese Yen' },
 ]
 
 const handleSubmit = async () => {
@@ -44,7 +53,12 @@ const handleSubmit = async () => {
   errors.value = {}
 
   try {
-    await put(`/accounts/${accountId}`, form)
+    // Only send currency if the account has no transactions
+    const payload = hasTransactions.value
+      ? { name: form.name }
+      : { name: form.name, currency: form.currency }
+
+    await put(`/accounts/${accountId}`, payload)
     router.push('/accounts')
   }
   catch (error: any) {
@@ -58,16 +72,16 @@ const handleSubmit = async () => {
 
 <template>
   <div class="space-y-6">
-    <div class="flex justify-between items-center">
-      <h2 class="text-2xl font-bold leading-7 text-gray-900">
-        Editar Cuenta
-      </h2>
+    <div class="flex items-center gap-3">
       <NuxtLink
         to="/accounts"
-        class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+        class="p-1 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100"
       >
-        Volver
+        <ChevronLeftIcon class="h-6 w-6" />
       </NuxtLink>
+      <h2 class="text-2xl font-bold leading-7 text-gray-900">
+        {{ t('accounts.editAccount') }}
+      </h2>
     </div>
 
     <!-- Loading state -->
@@ -79,34 +93,40 @@ const handleSubmit = async () => {
       <form class="space-y-6" @submit.prevent="handleSubmit">
         <FormsInput
           v-model="form.name"
-          label="Nombre"
+          :label="t('accounts.name')"
           :error="errors.name?.[0]"
-          placeholder="Ej: Banco Nación, Efectivo..."
+          :placeholder="t('accounts.namePlaceholder')"
           required
         />
 
-        <FormsSelect
-          v-model="form.currency"
-          label="Moneda"
-          :error="errors.currency?.[0]"
-          :options="currencies"
-          placeholder="Seleccionar moneda"
-          required
-        />
+        <div>
+          <FormsSelect
+            v-model="form.currency"
+            :label="t('accounts.currency')"
+            :error="errors.currency?.[0]"
+            :options="currencies"
+            :placeholder="t('accounts.currencyPlaceholder')"
+            :disabled="hasTransactions"
+            required
+          />
+          <p v-if="hasTransactions" class="mt-1 text-sm text-gray-500">
+            {{ t('accounts.currencyCannotChange') }}
+          </p>
+        </div>
 
         <div class="flex justify-end space-x-3">
           <NuxtLink
             to="/accounts"
             class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
           >
-            Cancelar
+            {{ t('common.cancel') }}
           </NuxtLink>
           <FormsFormButton
             type="submit"
             :loading="isSubmitting"
             :disabled="isSubmitting"
           >
-            Guardar Cambios
+            {{ t('accounts.saveChanges') }}
           </FormsFormButton>
         </div>
       </form>

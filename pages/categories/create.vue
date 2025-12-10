@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
+
+const { t } = useI18n()
 const router = useRouter()
 const { post } = useApiMutation()
 
 const form = reactive({
   name: '',
-  description: '',
+  transaction_type: '' as 'income' | 'outcome' | '',
 })
 
 const errors = ref<Record<string, string[]>>({})
@@ -29,33 +32,37 @@ const handleSubmit = async () => {
 
 <template>
   <div class="space-y-6">
-    <div class="flex justify-between items-center">
-      <h2 class="text-2xl font-bold leading-7 text-gray-900">
-        Nueva Categoría
-      </h2>
+    <div class="flex items-center gap-3">
       <NuxtLink
         to="/categories"
-        class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+        class="p-1 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100"
       >
-        Volver
+        <ChevronLeftIcon class="h-6 w-6" />
       </NuxtLink>
+      <h2 class="text-2xl font-bold leading-7 text-gray-900">
+        {{ t('categories.newCategory') }}
+      </h2>
     </div>
 
     <CommonCard>
       <form class="space-y-6" @submit.prevent="handleSubmit">
         <FormsInput
           v-model="form.name"
-          label="Nombre"
+          :label="t('categories.name')"
           :error="errors.name?.[0]"
-          placeholder="Ej: Comida, Transporte, Entretenimiento..."
+          :placeholder="t('categories.namePlaceholder')"
           required
         />
 
-        <FormsInput
-          v-model="form.description"
-          label="Descripción"
-          :error="errors.description?.[0]"
-          placeholder="Descripción opcional"
+        <FormsSelect
+          v-model="form.transaction_type"
+          :label="t('categories.transactionType')"
+          :error="errors.transaction_type?.[0]"
+          :options="[
+            { value: 'income', label: t('categories.types.income') },
+            { value: 'outcome', label: t('categories.types.expense') }
+          ]"
+          required
         />
 
         <div class="flex justify-end space-x-3">
@@ -63,14 +70,14 @@ const handleSubmit = async () => {
             to="/categories"
             class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
           >
-            Cancelar
+            {{ t('common.cancel') }}
           </NuxtLink>
           <FormsFormButton
             type="submit"
             :loading="isSubmitting"
             :disabled="isSubmitting"
           >
-            Crear Categoría
+            {{ t('categories.createCategory') }}
           </FormsFormButton>
         </div>
       </form>
