@@ -6,9 +6,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   // SPA mode via routeRules (avoids unhead bug with ssr:false)
-  routeRules: {
-    '/**': { ssr: false },
-  },
+  ssr: false,
 
   modules: [
     '@pinia/nuxt',
