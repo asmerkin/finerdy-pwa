@@ -74,6 +74,7 @@ export default defineNuxtConfig({
       background_color: '#f9fafb',
       display: 'standalone',
       orientation: 'portrait',
+      start_url: '/',
       icons: [
         {
           src: '/icons/icon-192.png',
@@ -94,8 +95,10 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
-      navigateFallback: '/',
-      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'],
+      navigateFallback: '/index.html',
+      navigateFallbackDenylist: [/^\/api\//],
+      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2,json}'],
+      cleanupOutdatedCaches: true,
       runtimeCaching: [
         {
           urlPattern: /^https:\/\/api\.finerdy\.app\/api\/.*/,
@@ -105,6 +108,35 @@ export default defineNuxtConfig({
             expiration: {
               maxEntries: 100,
               maxAgeSeconds: 60 * 60 * 24, // 24 hours
+            },
+            cacheableResponse: {
+              statuses: [0, 200],
+            },
+            networkTimeoutSeconds: 10,
+          },
+        },
+        {
+          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'google-fonts-cache',
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+            },
+            cacheableResponse: {
+              statuses: [0, 200],
+            },
+          },
+        },
+        {
+          urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'gstatic-fonts-cache',
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
             },
             cacheableResponse: {
               statuses: [0, 200],
