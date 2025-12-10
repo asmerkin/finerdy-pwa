@@ -16,5 +16,6 @@ const ui = useUiStore()
         <slot />
       </main>
     </div>
+    <CommonToastContainer />
   </div>
 </template>

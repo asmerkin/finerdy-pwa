@@ -18,9 +18,11 @@ const emit = defineEmits<{
   delete: [id: number]
 }>()
 
+const { t } = useI18n()
 const { formatMoney } = useMoney()
 const { formatDateTime } = useDate()
 const { post, del } = useApiMutation()
+const toast = useToast()
 
 const selectedTransaction = ref<Transaction | null>(null)
 const showDeleteDialog = ref(false)
@@ -41,8 +43,13 @@ const openDeleteDialog = (transactionId: number) => {
 
 const confirmDelete = async () => {
   if (transactionToDelete.value) {
-    await del(`/transactions/${transactionToDelete.value}`)
-    emit('delete', transactionToDelete.value)
+    try {
+      await del(`/transactions/${transactionToDelete.value}`)
+      emit('delete', transactionToDelete.value)
+      toast.success(t('transactions.deleted'))
+    } catch (error) {
+      toast.error(t('common.errorOccurred'))
+    }
   }
   showDeleteDialog.value = false
   transactionToDelete.value = null

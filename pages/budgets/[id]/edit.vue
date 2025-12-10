@@ -5,6 +5,7 @@ const { t } = useI18n()
 const route = useRoute()
 const { put } = useApiMutation()
 const auth = useAuthStore()
+const toast = useToast()
 
 const budgetId = route.params.id as string
 const workspaceCurrency = computed(() => auth.workspace?.default_currency || 'USD')
@@ -74,10 +75,12 @@ const handleSubmit = async () => {
       end_date: form.period === 'once' ? form.end_date : null,
     })
 
+    toast.success(t('budgets.updated'))
     navigateTo('/budgets')
   }
   catch (error: any) {
     errors.value = error.data?.errors || {}
+    toast.error(t('common.errorOccurred'))
   }
   finally {
     isSubmitting.value = false

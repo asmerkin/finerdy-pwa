@@ -18,6 +18,7 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const { putForm } = useApiMutation()
+const toast = useToast()
 
 const transactionId = route.params.id
 
@@ -175,10 +176,12 @@ const handleSubmit = async () => {
     })
 
     await putForm(`/transactions/${transactionId}`, formData)
+    toast.success(t('transactions.updated'))
     router.push('/transactions')
   }
   catch (error: any) {
     errors.value = error.data?.errors || {}
+    toast.error(t('common.errorOccurred'))
   }
   finally {
     isSubmitting.value = false

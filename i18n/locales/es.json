@@ -34,7 +34,8 @@
     "archived": "Archivado",
     "active": "Activo",
     "comingSoon": "Próximamente",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "errorOccurred": "Ocurrió un error"
   },
 
   "auth": {
@@ -116,6 +117,9 @@
     "new": "Nueva",
     "newTransaction": "Nueva Transacción",
     "editTransaction": "Editar Transacción",
+    "created": "Transacción creada exitosamente",
+    "updated": "Transacción actualizada exitosamente",
+    "deleted": "Transacción eliminada exitosamente",
     "transfer": "Transferencia",
     "newTransfer": "Nueva Transferencia",
     "editTransfer": "Editar Transferencia",
@@ -177,6 +181,7 @@
     "new": "Nueva Cuenta",
     "newAccount": "Nueva Cuenta",
     "editAccount": "Editar Cuenta",
+    "updated": "Cuenta actualizada exitosamente",
     "empty": "No hay cuentas",
     "emptyDescription": "No tienes cuentas registradas. Crea tu primera cuenta para comenzar a gestionar tus finanzas.",
     "createFirst": "Crear Primera Cuenta",
@@ -198,6 +203,8 @@
     "new": "Nueva Categoría",
     "newCategory": "Nueva Categoría",
     "editCategory": "Editar Categoría",
+    "created": "Categoría creada exitosamente",
+    "updated": "Categoría actualizada exitosamente",
     "empty": "No hay categorías",
     "emptyDescription": "No tienes categorías registradas. Crea tu primera categoría para clasificar tus transacciones.",
     "createFirst": "Crear Primera Categoría",
@@ -228,6 +235,8 @@
     "newBudgetDescription": "Define límites de gasto para tus categorías de egresos.",
     "editBudget": "Editar Presupuesto",
     "editBudgetDescription": "Modifica los detalles del presupuesto \"{name}\".",
+    "created": "Presupuesto creado exitosamente",
+    "updated": "Presupuesto actualizado exitosamente",
     "empty": "No hay presupuestos",
     "emptyDescription": "Crea presupuestos para controlar tus gastos por categoría.",
     "createFirst": "Crear Primer Presupuesto",

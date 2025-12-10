@@ -14,7 +14,7 @@ const classes = computed(() => getTypeClasses(props.type))
     :class="[
       classes.bg,
       classes.text,
-      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold',
     ]"
   >
     {{ getTypeLabel(type) }}

@@ -6,6 +6,7 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const { put } = useApiMutation()
+const toast = useToast()
 
 const categoryId = route.params.id
 
@@ -46,10 +47,12 @@ const handleSubmit = async () => {
       : { name: form.name, transaction_type: form.transaction_type }
 
     await put(`/categories/${categoryId}`, payload)
+    toast.success(t('categories.updated'))
     router.push('/categories')
   }
   catch (error: any) {
     errors.value = error.data?.errors || {}
+    toast.error(t('common.errorOccurred'))
   }
   finally {
     isSubmitting.value = false

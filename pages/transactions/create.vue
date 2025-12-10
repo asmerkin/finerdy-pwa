@@ -5,6 +5,7 @@ import type { Account, Category, Budget } from '~/types'
 const { t } = useI18n()
 const router = useRouter()
 const { post } = useApiMutation()
+const toast = useToast()
 
 // Fetch accounts, categories and budgets
 const { data: accountsData } = await useApi<{ accounts: Account[] }>('/accounts')
@@ -102,10 +103,12 @@ const handleSubmit = async () => {
       description: form.description || null,
       happened_at: form.happened_at,
     })
+    toast.success(t('transactions.created'))
     router.push('/transactions')
   }
   catch (error: any) {
     errors.value = error.data?.errors || {}
+    toast.error(t('common.errorOccurred'))
   }
   finally {
     isSubmitting.value = false

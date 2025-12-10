@@ -4,6 +4,7 @@ import type { Category } from '~/types'
 const { t } = useI18n()
 const { post } = useApiMutation()
 const auth = useAuthStore()
+const toast = useToast()
 
 const workspaceCurrency = computed(() => auth.workspace?.default_currency || 'USD')
 
@@ -53,10 +54,12 @@ const handleSubmit = async () => {
       end_date: form.period === 'once' ? form.end_date : null,
     })
 
+    toast.success(t('budgets.created'))
     navigateTo('/budgets')
   }
   catch (error: any) {
     errors.value = error.data?.errors || {}
+    toast.error(t('common.errorOccurred'))
   }
   finally {
     isSubmitting.value = false

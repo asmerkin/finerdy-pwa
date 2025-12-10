@@ -4,6 +4,7 @@ import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
 const router = useRouter()
 const { post } = useApiMutation()
 const auth = useAuthStore()
+const toast = useToast()
 
 const form = reactive({
   name: '',
@@ -32,10 +33,12 @@ const handleSubmit = async () => {
 
   try {
     await post('/accounts', form)
+    toast.success('Cuenta creada exitosamente')
     router.push('/accounts')
   }
   catch (error: any) {
     errors.value = error.data?.errors || {}
+    toast.error('Ocurrió un error al crear la cuenta')
   }
   finally {
     isSubmitting.value = false

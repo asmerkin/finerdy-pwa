@@ -4,6 +4,7 @@ import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
 const { t } = useI18n()
 const router = useRouter()
 const { post } = useApiMutation()
+const toast = useToast()
 
 const form = reactive({
   name: '',
@@ -19,10 +20,12 @@ const handleSubmit = async () => {
 
   try {
     await post('/categories', form)
+    toast.success(t('categories.created'))
     router.push('/categories')
   }
   catch (error: any) {
     errors.value = error.data?.errors || {}
+    toast.error(t('common.errorOccurred'))
   }
   finally {
     isSubmitting.value = false
