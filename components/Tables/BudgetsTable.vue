@@ -48,7 +48,6 @@ const confirmMessage = computed(() => {
 })
 
 const openConfirmDialog = (budget: Budget, action: 'delete' | 'archive' | 'unarchive') => {
-  console.log('openConfirmDialog called', { budget, action })
   selectedBudget.value = budget
   confirmAction.value = action
   showConfirmDialog.value = true

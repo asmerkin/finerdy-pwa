@@ -24,7 +24,8 @@ const isInSettings = computed(() => {
   const path = route.path
   return path.startsWith('/accounts') ||
     path.startsWith('/categories') ||
-    path.startsWith('/workspaces')
+    path.startsWith('/workspaces') ||
+    path.startsWith('/profile/api-tokens')
 })
 
 // Open settings if we're in a settings page
@@ -64,6 +65,7 @@ const settingsNavigation = computed(() => [
   { name: 'Workspaces', to: '/workspaces', active: isActive('/workspaces') },
   { name: 'Cuentas', to: '/accounts', active: isActive('/accounts') },
   { name: 'Categorías', to: '/categories', active: isActive('/categories') },
+  { name: 'API Tokens', to: '/profile/api-tokens', active: isActive('/profile/api-tokens') },
 ])
 
 const handleNavClick = () => {

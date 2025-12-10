@@ -57,7 +57,7 @@ const variantClasses: Record<Variant, { icon: string; button: string }> = {
         <div class="flex min-h-screen items-center justify-center px-4 py-4 text-center sm:block sm:p-0">
           <!-- Backdrop -->
           <div
-            class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+            class="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
             aria-hidden="true"
             @click="emit('cancel')"
           />
