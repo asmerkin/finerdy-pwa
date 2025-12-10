@@ -3,6 +3,7 @@ definePageMeta({
   layout: 'auth',
 })
 
+const { t } = useI18n()
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase
 
@@ -43,7 +44,7 @@ const handleSubmit = async () => {
 <template>
   <div>
     <div class="mb-4 text-sm text-gray-600">
-      Forgot your password? No problem. Just let us know your email address and we will email you a password reset link.
+      {{ t('auth.forgotPasswordDescription') }}
     </div>
 
     <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
@@ -53,7 +54,7 @@ const handleSubmit = async () => {
     <form @submit.prevent="handleSubmit">
       <div>
         <label for="email" class="block text-sm font-medium text-gray-700">
-          Email
+          {{ t('auth.email') }}
         </label>
         <input
           id="email"
@@ -74,7 +75,7 @@ const handleSubmit = async () => {
           to="/login"
           class="text-center rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
         >
-          Back to login
+          {{ t('auth.backToLogin') }}
         </NuxtLink>
 
         <FormsFormButton
@@ -83,7 +84,7 @@ const handleSubmit = async () => {
           :loading="isSubmitting"
           :disabled="isSubmitting"
         >
-          Email Password Reset Link
+          {{ t('auth.sendResetLink') }}
         </FormsFormButton>
       </div>
     </form>

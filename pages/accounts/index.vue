@@ -2,6 +2,8 @@
 import { PlusIcon } from '@heroicons/vue/24/outline'
 import type { Account } from '~/types'
 
+const { t } = useI18n()
+
 // Fetch accounts
 const { data, pending, refresh } = await useApi<{
   accounts: Account[]
@@ -34,12 +36,12 @@ const handleDelete = () => {
   <div class="space-y-6">
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
       <h2 class="text-2xl font-bold text-gray-900">
-        Cuentas
+        {{ t('accounts.title') }}
       </h2>
       <FormsIconButton
         to="/accounts/create"
         :icon="PlusIcon"
-        label="Nueva"
+        :label="t('accounts.new')"
         variant="primary"
       />
     </div>
@@ -50,13 +52,13 @@ const handleDelete = () => {
     </div>
 
     <!-- Empty state -->
-    <CommonCard v-else-if="accounts.length === 0" title="Sin cuentas">
+    <CommonCard v-else-if="accounts.length === 0" :title="t('accounts.empty')">
       <p class="text-gray-600">
-        No hay cuentas registradas. Crea tu primera cuenta para empezar.
+        {{ t('accounts.emptyDescription') }}
       </p>
       <div class="mt-4">
         <FormsFormButton to="/accounts/create" variant="primary">
-          Crear Primera Cuenta
+          {{ t('accounts.createFirst') }}
         </FormsFormButton>
       </div>
     </CommonCard>
@@ -66,7 +68,7 @@ const handleDelete = () => {
       <CommonCard
         v-for="(currencyAccounts, currency) in accountsByCurrency"
         :key="currency"
-        :title="`Cuentas en ${currency}`"
+        :title="t('accounts.accountsIn', { currency })"
       >
         <TablesAccountsTable
           :accounts="currencyAccounts"

@@ -8,6 +8,7 @@ import {
 
 // No middleware needed - global auth middleware handles protection
 
+const { t } = useI18n()
 const auth = useAuthStore()
 
 // Fetch dashboard data
@@ -17,39 +18,39 @@ const { data: dashboardData, pending } = await useApi<{
 
 const criticalBudgets = computed(() => dashboardData.value?.criticalBudgets || [])
 
-const quickActions = [
+const quickActions = computed(() => [
   {
-    name: 'New Account',
-    description: 'Add a new bank account or cash account',
+    name: t('dashboard.newAccount'),
+    description: t('dashboard.newAccountDescription'),
     to: '/accounts/create',
     icon: BanknotesIcon,
   },
   {
-    name: 'New Transaction',
-    description: 'Record an income or expense',
+    name: t('dashboard.newTransaction'),
+    description: t('dashboard.newTransactionDescription'),
     to: '/transactions/create',
     icon: PlusIcon,
   },
   {
-    name: 'Transfer',
-    description: 'Move money between accounts',
+    name: t('dashboard.transfer'),
+    description: t('dashboard.transferDescription'),
     to: '/transactions/transfer/create',
     icon: ArrowsRightLeftIcon,
   },
   {
-    name: 'Currency Exchange',
-    description: 'Convert between different currencies',
+    name: t('dashboard.currencyExchange'),
+    description: t('dashboard.currencyExchangeDescription'),
     to: '/transactions/exchange/create',
     icon: CurrencyDollarIcon,
   },
-]
+])
 </script>
 
 <template>
   <div class="space-y-6">
     <div>
       <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-        Dashboard
+        {{ t('dashboard.title') }}
       </h2>
     </div>
 
@@ -74,11 +75,11 @@ const quickActions = [
     </div>
 
     <!-- Critical Budgets Widget (TODO: Implement budgets feature) -->
-    <CommonCard v-if="criticalBudgets.length > 0" title="Critical Budgets">
+    <CommonCard v-if="criticalBudgets.length > 0" :title="t('dashboard.criticalBudgets')">
       <template #header>
         <div class="flex items-center justify-between px-4 py-5 sm:px-6 border-b border-gray-200">
           <h3 class="text-lg font-semibold">
-            Critical Budgets
+            {{ t('dashboard.criticalBudgets') }}
           </h3>
         </div>
       </template>
@@ -116,17 +117,16 @@ const quickActions = [
     </CommonCard>
 
     <!-- Welcome Card -->
-    <CommonCard title="Welcome to Finerdy">
+    <CommonCard :title="t('dashboard.welcome')">
       <p class="text-gray-600">
-        Manage your personal finances simply and effectively.
-        Record your income, expenses, and keep control of your money.
+        {{ t('dashboard.welcomeDescription') }}
       </p>
       <div class="mt-4 flex flex-wrap gap-3">
         <FormsFormButton to="/accounts" variant="primary">
-          View Accounts
+          {{ t('dashboard.viewAccounts') }}
         </FormsFormButton>
         <FormsFormButton to="/transactions" variant="secondary">
-          View Transactions
+          {{ t('dashboard.viewTransactions') }}
         </FormsFormButton>
       </div>
     </CommonCard>

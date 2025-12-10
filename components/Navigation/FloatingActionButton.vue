@@ -6,6 +6,7 @@ import {
   BanknotesIcon,
 } from '@heroicons/vue/24/outline'
 
+const { t } = useI18n()
 const isMenuOpen = ref(false)
 
 const toggleMenu = () => {
@@ -16,26 +17,26 @@ const closeMenu = () => {
   isMenuOpen.value = false
 }
 
-const actions = [
+const actions = computed(() => [
   {
-    name: 'Transacción',
+    name: t('fab.transaction'),
     href: '/transactions/create',
     icon: BanknotesIcon,
-    description: 'Nueva transacción',
+    description: t('fab.newTransaction'),
   },
   {
-    name: 'Transferencia',
+    name: t('fab.transfer'),
     href: '/transactions/transfer/create',
     icon: ArrowsRightLeftIcon,
-    description: 'Entre cuentas',
+    description: t('fab.betweenAccounts'),
   },
   {
-    name: 'Cambio',
+    name: t('fab.exchange'),
     href: '/transactions/exchange/create',
     icon: CurrencyDollarIcon,
-    description: 'Cambio de moneda',
+    description: t('fab.currencyExchange'),
   },
-]
+])
 </script>
 
 <template>
@@ -87,7 +88,7 @@ const actions = [
     <button
       class="w-14 h-14 rounded-full bg-primary-600 text-white shadow-lg hover:bg-primary-700 transition-all duration-200 flex items-center justify-center"
       :class="isMenuOpen ? 'rotate-45 scale-110' : 'rotate-0 scale-100'"
-      :title="isMenuOpen ? 'Cerrar' : 'Nueva operación'"
+      :title="isMenuOpen ? t('fab.close') : t('fab.newOperation')"
       @click="toggleMenu"
     >
       <PlusIcon class="h-6 w-6" />

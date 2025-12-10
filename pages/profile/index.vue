@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { t } = useI18n()
+const { t, locale, setLocale } = useI18n()
 const auth = useAuthStore()
 const { put } = useApiMutation()
 
@@ -12,7 +12,7 @@ const profileForm = reactive({
   name: auth.user?.name || '',
   email: auth.user?.email || '',
   timezone: auth.user?.timezone || 'UTC',
-  locale: auth.user?.locale || 'en',
+  locale: auth.user?.locale || locale.value,
 })
 
 // Watch for auth.user changes to populate form
@@ -21,9 +21,20 @@ watch(() => auth.user, (user) => {
     profileForm.name = user.name
     profileForm.email = user.email
     profileForm.timezone = user.timezone || 'UTC'
-    profileForm.locale = user.locale || 'en'
+    profileForm.locale = user.locale || locale.value
+    // Sync locale with i18n
+    if (user.locale && user.locale !== locale.value) {
+      setLocale(user.locale)
+    }
   }
 }, { immediate: true })
+
+// Watch for locale changes in the form to update i18n
+watch(() => profileForm.locale, (newLocale) => {
+  if (newLocale && newLocale !== locale.value) {
+    setLocale(newLocale)
+  }
+})
 
 const profileErrors = ref<Record<string, string[]>>({})
 const isProfileSubmitting = ref(false)

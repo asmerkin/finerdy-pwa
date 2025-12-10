@@ -4,6 +4,7 @@ definePageMeta({
   middleware: ['auth'],
 })
 
+const { t } = useI18n()
 const auth = useAuthStore()
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase
@@ -58,10 +59,10 @@ async function createWorkspace() {
     <div class="max-w-md w-full space-y-8">
       <div>
         <h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
-          Welcome to Finerdy
+          {{ t('workspaces.onboardingWelcome') }}
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
-          Let's create your first workspace to get started
+          {{ t('workspaces.onboardingDescription') }}
         </p>
       </div>
 
@@ -70,14 +71,14 @@ async function createWorkspace() {
           <!-- Workspace Name -->
           <div>
             <label for="name" class="block text-sm font-medium text-gray-700">
-              Workspace Name
+              {{ t('workspaces.name') }}
             </label>
             <input
               id="name"
               v-model="form.name"
               type="text"
               required
-              placeholder="My Finances"
+              :placeholder="t('workspaces.namePlaceholder')"
               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
             >
             <p v-if="errors.name" class="mt-1 text-sm text-danger-600">
@@ -88,7 +89,7 @@ async function createWorkspace() {
           <!-- Default Currency -->
           <div>
             <label for="currency" class="block text-sm font-medium text-gray-700">
-              Default Currency
+              {{ t('workspaces.defaultCurrency') }}
             </label>
             <select
               id="currency"
@@ -100,7 +101,7 @@ async function createWorkspace() {
               </option>
             </select>
             <p class="mt-1 text-xs text-gray-500">
-              This cannot be changed later
+              {{ t('workspaces.currencyWarning') }}
             </p>
             <p v-if="errors.default_currency" class="mt-1 text-sm text-danger-600">
               {{ errors.default_currency[0] }}
@@ -114,8 +115,8 @@ async function createWorkspace() {
             :disabled="isSubmitting"
             class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span v-if="isSubmitting">Creating...</span>
-            <span v-else>Create Workspace</span>
+            <span v-if="isSubmitting">{{ t('common.loading') }}</span>
+            <span v-else>{{ t('workspaces.createWorkspace') }}</span>
           </button>
         </div>
       </form>

@@ -3,6 +3,7 @@ definePageMeta({
   layout: 'auth',
 })
 
+const { t } = useI18n()
 const auth = useAuthStore()
 const route = useRoute()
 
@@ -49,7 +50,7 @@ const handleSubmit = async () => {
     <form @submit.prevent="handleSubmit">
       <div>
       <label for="email" class="block text-sm font-medium text-gray-700">
-        Email
+        {{ t('auth.email') }}
       </label>
       <input
         id="email"
@@ -67,7 +68,7 @@ const handleSubmit = async () => {
 
     <div class="mt-4">
       <label for="password" class="block text-sm font-medium text-gray-700">
-        Password
+        {{ t('auth.password') }}
       </label>
       <input
         id="password"
@@ -89,7 +90,7 @@ const handleSubmit = async () => {
           type="checkbox"
           class="rounded border-gray-300 text-primary-600 shadow-sm focus:ring-primary-500"
         >
-        <span class="ms-2 text-sm text-gray-600">Remember me</span>
+        <span class="ms-2 text-sm text-gray-600">{{ t('auth.rememberMe') }}</span>
       </label>
     </div>
 
@@ -98,7 +99,7 @@ const handleSubmit = async () => {
           to="/forgot-password"
           class="text-center rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
         >
-          Forgot your password?
+          {{ t('auth.forgotPassword') }}
         </NuxtLink>
 
         <FormsFormButton
@@ -107,7 +108,7 @@ const handleSubmit = async () => {
           :loading="isSubmitting"
           :disabled="isSubmitting"
         >
-          Log in
+          {{ t('auth.login') }}
         </FormsFormButton>
       </div>
     </form>

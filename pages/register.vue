@@ -3,6 +3,7 @@ definePageMeta({
   layout: 'auth',
 })
 
+const { t } = useI18n()
 const auth = useAuthStore()
 
 const form = reactive({
@@ -36,7 +37,7 @@ const handleSubmit = async () => {
   <form @submit.prevent="handleSubmit">
     <div>
       <label for="name" class="block text-sm font-medium text-gray-700">
-        Name
+        {{ t('auth.name') }}
       </label>
       <input
         id="name"
@@ -54,7 +55,7 @@ const handleSubmit = async () => {
 
     <div class="mt-4">
       <label for="email" class="block text-sm font-medium text-gray-700">
-        Email
+        {{ t('auth.email') }}
       </label>
       <input
         id="email"
@@ -71,7 +72,7 @@ const handleSubmit = async () => {
 
     <div class="mt-4">
       <label for="password" class="block text-sm font-medium text-gray-700">
-        Password
+        {{ t('auth.password') }}
       </label>
       <input
         id="password"
@@ -88,7 +89,7 @@ const handleSubmit = async () => {
 
     <div class="mt-4">
       <label for="password_confirmation" class="block text-sm font-medium text-gray-700">
-        Confirm Password
+        {{ t('auth.confirmPassword') }}
       </label>
       <input
         id="password_confirmation"
@@ -108,7 +109,7 @@ const handleSubmit = async () => {
         to="/login"
         class="text-center rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
       >
-        Already registered?
+        {{ t('auth.alreadyRegistered') }}
       </NuxtLink>
 
       <FormsFormButton
@@ -117,7 +118,7 @@ const handleSubmit = async () => {
         :loading="isSubmitting"
         :disabled="isSubmitting"
       >
-        Register
+        {{ t('auth.register') }}
       </FormsFormButton>
     </div>
   </form>

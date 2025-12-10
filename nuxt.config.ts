@@ -30,13 +30,13 @@ export default defineNuxtConfig({
       { code: 'en', file: 'en.json', name: 'English' },
       { code: 'es', file: 'es.json', name: 'Español' },
     ],
-    defaultLocale: 'en',
+    defaultLocale: 'es',
     lazy: true,
     strategy: 'no_prefix',
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_locale',
-      fallbackLocale: 'en',
+      fallbackLocale: 'es',
     },
     bundle: {
       optimizeTranslationDirective: false,

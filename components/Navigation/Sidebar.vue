@@ -13,6 +13,7 @@ import {
   CalculatorIcon,
 } from '@heroicons/vue/24/outline'
 
+const { t } = useI18n()
 const route = useRoute()
 const auth = useAuthStore()
 const ui = useUiStore()
@@ -47,25 +48,25 @@ const isActive = (path: string) => {
 }
 
 const mainNavigation = computed(() => [
-  { name: 'Dashboard', to: '/', icon: HomeIcon, active: isActive('/') && route.path === '/' },
+  { name: t('nav.dashboard'), to: '/', icon: HomeIcon, active: isActive('/') && route.path === '/' },
 ])
 
 const transactionNavigation = computed(() => [
-  { name: 'Transacciones', to: '/transactions', icon: BanknotesIcon, active: isActive('/transactions') },
-  { name: 'Presupuestos', to: '/budgets', icon: CalculatorIcon, active: isActive('/budgets') },
+  { name: t('nav.transactions'), to: '/transactions', icon: BanknotesIcon, active: isActive('/transactions') },
+  { name: t('nav.budgets'), to: '/budgets', icon: CalculatorIcon, active: isActive('/budgets') },
 ])
 
 const reportsNavigation = computed(() => [
-  { name: 'Estado Patrimonial', to: '/reports/balance-sheet', icon: DocumentTextIcon, active: isActive('/reports/balance-sheet') },
-  { name: 'Estado de Resultados', to: '/reports/income-statement', icon: DocumentTextIcon, active: isActive('/reports/income-statement') },
-  { name: 'Presupuestos', to: '/budgets/reports', icon: CalculatorIcon, active: isActive('/budgets/reports') },
+  { name: t('nav.balanceSheet'), to: '/reports/balance-sheet', icon: DocumentTextIcon, active: isActive('/reports/balance-sheet') },
+  { name: t('nav.incomeStatement'), to: '/reports/income-statement', icon: DocumentTextIcon, active: isActive('/reports/income-statement') },
+  { name: t('nav.budgets'), to: '/budgets/reports', icon: CalculatorIcon, active: isActive('/budgets/reports') },
 ])
 
 const settingsNavigation = computed(() => [
-  { name: 'Workspaces', to: '/workspaces', active: isActive('/workspaces') },
-  { name: 'Cuentas', to: '/accounts', active: isActive('/accounts') },
-  { name: 'Categorías', to: '/categories', active: isActive('/categories') },
-  { name: 'API Tokens', to: '/profile/api-tokens', active: isActive('/profile/api-tokens') },
+  { name: t('nav.workspace'), to: '/workspaces', active: isActive('/workspaces') },
+  { name: t('nav.accounts'), to: '/accounts', active: isActive('/accounts') },
+  { name: t('nav.categories'), to: '/categories', active: isActive('/categories') },
+  { name: t('nav.apiTokens'), to: '/profile/api-tokens', active: isActive('/profile/api-tokens') },
 ])
 
 const handleNavClick = () => {
@@ -125,7 +126,7 @@ const gravatarUrl = computed(() => {
         <button
           @click="ui.toggleCollapsed"
           class="hidden lg:block p-2 rounded-md text-gray-500 hover:bg-gray-100 transition-colors"
-          :title="ui.isSidebarCollapsed ? 'Expandir' : 'Colapsar'"
+          :title="ui.isSidebarCollapsed ? t('nav.expandSidebar') : t('nav.collapseSidebar')"
         >
           <ChevronLeftIcon v-if="!ui.isSidebarCollapsed" class="h-5 w-5" />
           <ChevronRightIcon v-else class="h-5 w-5" />
@@ -148,7 +149,7 @@ const gravatarUrl = computed(() => {
       ]"
     >
       <label class="block text-xs font-medium text-gray-500 uppercase mb-1">
-        Workspace
+        {{ t('nav.workspace') }}
       </label>
       <select
         :value="auth.workspace?.id"
@@ -196,7 +197,7 @@ const gravatarUrl = computed(() => {
             { 'lg:opacity-0 lg:h-0 lg:mb-0 lg:overflow-hidden': ui.isSidebarCollapsed },
           ]"
         >
-          Transacciones
+          {{ t('nav.transactions') }}
         </h3>
         <div class="space-y-1">
           <NuxtLink
@@ -227,7 +228,7 @@ const gravatarUrl = computed(() => {
             { 'lg:opacity-0 lg:h-0 lg:mb-0 lg:overflow-hidden': ui.isSidebarCollapsed },
           ]"
         >
-          Reportes
+          {{ t('nav.reports') }}
         </h3>
         <div class="space-y-1">
           <NuxtLink
@@ -257,12 +258,12 @@ const gravatarUrl = computed(() => {
             'flex items-center w-full text-xs font-semibold text-gray-500 uppercase tracking-wider hover:bg-gray-50 rounded-md transition-colors',
             ui.isSidebarCollapsed ? 'lg:justify-center lg:px-2 lg:py-3' : 'justify-between px-3 py-2',
           ]"
-          :title="ui.isSidebarCollapsed ? 'Configuración' : ''"
+          :title="ui.isSidebarCollapsed ? t('nav.settings') : ''"
           @click="toggleSettings"
         >
           <div :class="['flex items-center', ui.isSidebarCollapsed ? '' : 'gap-2']">
             <CogIcon class="h-5 w-5 shrink-0" />
-            <span :class="{ 'lg:hidden': ui.isSidebarCollapsed }">Configuración</span>
+            <span :class="{ 'lg:hidden': ui.isSidebarCollapsed }">{{ t('nav.settings') }}</span>
           </div>
           <ChevronDownIcon
             v-if="!ui.isSidebarCollapsed"
@@ -318,11 +319,11 @@ const gravatarUrl = computed(() => {
           'flex items-center w-full text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 transition-colors',
           ui.isSidebarCollapsed ? 'lg:justify-center lg:px-2 lg:py-3' : 'gap-3 px-3 py-2',
         ]"
-        :title="ui.isSidebarCollapsed ? 'Cerrar sesión' : ''"
+        :title="ui.isSidebarCollapsed ? t('auth.logout') : ''"
         @click="logout"
       >
         <ArrowRightOnRectangleIcon class="h-5 w-5 shrink-0" />
-        <span :class="{ 'lg:hidden': ui.isSidebarCollapsed }">Cerrar sesión</span>
+        <span :class="{ 'lg:hidden': ui.isSidebarCollapsed }">{{ t('auth.logout') }}</span>
       </button>
     </div>
   </aside>
