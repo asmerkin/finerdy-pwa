@@ -4,14 +4,24 @@ definePageMeta({
 })
 
 const auth = useAuthStore()
+const route = useRoute()
 
 const form = reactive({
   email: '',
   password: '',
+  remember: false,
 })
 
 const errors = ref<Record<string, string[]>>({})
 const isSubmitting = ref(false)
+
+// Show success message if redirected from password reset
+const status = computed(() => {
+  if (route.query.reset === 'success') {
+    return 'Your password has been reset successfully.'
+  }
+  return ''
+})
 
 const handleSubmit = async () => {
   isSubmitting.value = true
@@ -31,68 +41,75 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <CommonCard>
-    <form class="space-y-6" @submit.prevent="handleSubmit">
-      <div>
-        <label for="email" class="block text-sm font-medium text-gray-700">
-          Email
-        </label>
-        <input
-          id="email"
-          v-model="form.email"
-          type="email"
-          autocomplete="email"
-          required
-          class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none sm:text-sm"
-        >
-        <p v-if="errors.email" class="mt-1 text-sm text-danger-600">
-          {{ errors.email[0] }}
-        </p>
-      </div>
+  <div>
+    <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+      {{ status }}
+    </div>
 
+    <form @submit.prevent="handleSubmit">
       <div>
-        <label for="password" class="block text-sm font-medium text-gray-700">
-          Password
-        </label>
-        <input
-          id="password"
-          v-model="form.password"
-          type="password"
-          autocomplete="current-password"
-          required
-          class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none sm:text-sm"
-        >
-        <p v-if="errors.password" class="mt-1 text-sm text-danger-600">
-          {{ errors.password[0] }}
-        </p>
-      </div>
+      <label for="email" class="block text-sm font-medium text-gray-700">
+        Email
+      </label>
+      <input
+        id="email"
+        v-model="form.email"
+        type="email"
+        autocomplete="username"
+        required
+        autofocus
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+      >
+      <p v-if="errors.email" class="mt-2 text-sm text-danger-600">
+        {{ errors.email[0] }}
+      </p>
+    </div>
 
-      <div class="flex items-center justify-between">
+    <div class="mt-4">
+      <label for="password" class="block text-sm font-medium text-gray-700">
+        Password
+      </label>
+      <input
+        id="password"
+        v-model="form.password"
+        type="password"
+        autocomplete="current-password"
+        required
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+      >
+      <p v-if="errors.password" class="mt-2 text-sm text-danger-600">
+        {{ errors.password[0] }}
+      </p>
+    </div>
+
+    <div class="mt-4 block">
+      <label class="flex items-center">
+        <input
+          v-model="form.remember"
+          type="checkbox"
+          class="rounded border-gray-300 text-primary-600 shadow-sm focus:ring-primary-500"
+        >
+        <span class="ms-2 text-sm text-gray-600">Remember me</span>
+      </label>
+    </div>
+
+      <div class="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
         <NuxtLink
           to="/forgot-password"
-          class="text-sm font-medium text-primary-600 hover:text-primary-500"
+          class="text-center rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
         >
           Forgot your password?
         </NuxtLink>
+
+        <FormsFormButton
+          type="submit"
+          variant="primary"
+          :loading="isSubmitting"
+          :disabled="isSubmitting"
+        >
+          Log in
+        </FormsFormButton>
       </div>
-
-      <FormsFormButton
-        type="submit"
-        variant="primary"
-        size="lg"
-        class="w-full"
-        :loading="isSubmitting"
-        :disabled="isSubmitting"
-      >
-        Sign in
-      </FormsFormButton>
-
-      <p class="text-center text-sm text-gray-600">
-        Don't have an account?
-        <NuxtLink to="/register" class="font-medium text-primary-600 hover:text-primary-500">
-          Sign up
-        </NuxtLink>
-      </p>
     </form>
-  </CommonCard>
+  </div>
 </template>
