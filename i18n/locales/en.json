@@ -62,7 +62,8 @@
     "verifyEmailDescription": "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.",
     "verifyEmailSent": "A new verification link has been sent to the email address you provided during registration.",
     "resendVerification": "Resend Verification Email",
-    "inviteMessage": "You have been invited to join Finerdy. Complete your details to create your account."
+    "inviteMessage": "You have been invited to join Finerdy. Complete your details to create your account.",
+    "sessionExpired": "Your session has expired. Please log in again."
   },
 
   "nav": {

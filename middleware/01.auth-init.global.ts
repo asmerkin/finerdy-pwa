@@ -5,6 +5,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (import.meta.server) return
 
   const auth = useAuthStore()
+  const toast = useToastStore()
+  const { t } = useI18n()
 
   // Initialize token from localStorage if not already done
   if (!auth.token) {
@@ -14,6 +16,15 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // Public pages that don't require auth check
   const publicPages = ['/login', '/register', '/forgot-password', '/reset-password']
   const isPublicPage = publicPages.some(page => to.path.startsWith(page))
+
+  // Check if token is expired
+  if (auth.token && auth.isTokenExpired()) {
+    auth.handleTokenExpiration()
+    if (!isPublicPage) {
+      toast.warning(t('auth.sessionExpired'))
+      return navigateTo('/login')
+    }
+  }
 
   // If going to a public page and already authenticated, redirect to home
   if (isPublicPage && auth.isAuthenticated) {

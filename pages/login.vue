@@ -28,7 +28,7 @@ const handleSubmit = async () => {
   isSubmitting.value = true
   errors.value = {}
 
-  const result = await auth.login(form.email, form.password)
+  const result = await auth.login(form.email, form.password, form.remember)
 
   if (result.success) {
     navigateTo('/')

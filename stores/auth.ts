@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { User, Workspace, WorkspaceListItem } from '~/types'
 
 const TOKEN_KEY = 'finerdy_token'
+const TOKEN_EXPIRES_KEY = 'finerdy_token_expires'
 
 export const useAuthStore = defineStore('auth', () => {
   const config = useRuntimeConfig()
@@ -12,6 +13,7 @@ export const useAuthStore = defineStore('auth', () => {
   const workspace = ref<Workspace | null>(null)
   const workspaces = ref<WorkspaceListItem[]>([])
   const token = ref<string | null>(null)
+  const tokenExpiresAt = ref<string | null>(null)
   const isLoading = ref(false)
   const isAuthenticated = computed(() => !!token.value && !!user.value)
 
@@ -19,19 +21,40 @@ export const useAuthStore = defineStore('auth', () => {
   function initToken() {
     if (import.meta.client) {
       token.value = localStorage.getItem(TOKEN_KEY)
+      tokenExpiresAt.value = localStorage.getItem(TOKEN_EXPIRES_KEY)
     }
   }
 
   // Save token to localStorage
-  function setToken(newToken: string | null) {
+  function setToken(newToken: string | null, expiresAt?: string | null) {
     token.value = newToken
+    tokenExpiresAt.value = expiresAt ?? null
     if (import.meta.client) {
       if (newToken) {
         localStorage.setItem(TOKEN_KEY, newToken)
+        if (expiresAt) {
+          localStorage.setItem(TOKEN_EXPIRES_KEY, expiresAt)
+        }
       } else {
         localStorage.removeItem(TOKEN_KEY)
+        localStorage.removeItem(TOKEN_EXPIRES_KEY)
       }
     }
+  }
+
+  // Check if token is expired
+  function isTokenExpired(): boolean {
+    if (!tokenExpiresAt.value) return false
+    return new Date(tokenExpiresAt.value) <= new Date()
+  }
+
+  // Clear auth state and redirect to login with optional message
+  function handleTokenExpiration() {
+    setToken(null)
+    user.value = null
+    workspace.value = null
+    workspaces.value = []
+    return true
   }
 
   // Build headers with Bearer token
@@ -47,11 +70,12 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // Login
-  async function login(email: string, password: string) {
+  async function login(email: string, password: string, remember: boolean = false) {
     isLoading.value = true
     try {
       const response = await $fetch<{
         token: string
+        expires_at: string
         user: { id: number; name: string; email: string }
       }>(`${apiBase}/api/login`, {
         method: 'POST',
@@ -59,10 +83,10 @@ export const useAuthStore = defineStore('auth', () => {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: { email, password },
+        body: { email, password, remember },
       })
 
-      setToken(response.token)
+      setToken(response.token, response.expires_at)
       await fetchUser()
       return { success: true }
     }
@@ -88,6 +112,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await $fetch<{
         token: string
+        expires_at: string
         user: { id: number; name: string; email: string }
       }>(`${apiBase}/api/register`, {
         method: 'POST',
@@ -98,7 +123,7 @@ export const useAuthStore = defineStore('auth', () => {
         body: data,
       })
 
-      setToken(response.token)
+      setToken(response.token, response.expires_at)
       await fetchUser()
       return { success: true }
     }
@@ -190,6 +215,7 @@ export const useAuthStore = defineStore('auth', () => {
     workspace,
     workspaces,
     token,
+    tokenExpiresAt,
     isLoading,
     isAuthenticated,
 
@@ -202,5 +228,7 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     fetchUser,
     switchWorkspace,
+    isTokenExpired,
+    handleTokenExpiration,
   }
 })
