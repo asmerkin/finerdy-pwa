@@ -39,17 +39,18 @@ const queryParams = computed(() => {
   return params
 })
 
-// Fetch transactions with filters
-const { data, pending, refresh } = await useApi<{
-  transactions: Transaction[]
-}>('/transactions', {
-  params: queryParams,
-})
-
-// Fetch accounts, categories, and budgets for filter dropdowns
-const { data: accountsData } = await useApi<{ accounts: Account[] }>('/accounts')
-const { data: categoriesData } = await useApi<{ categories: Category[] }>('/categories')
-const { data: budgetsData } = await useApi<{ budgets: Budget[] }>('/budgets')
+// Fetch all data in parallel
+const [
+  { data, pending, refresh },
+  { data: accountsData },
+  { data: categoriesData },
+  { data: budgetsData },
+] = await Promise.all([
+  useApi<{ transactions: Transaction[] }>('/transactions', { params: queryParams }),
+  useApi<{ accounts: Account[] }>('/accounts'),
+  useApi<{ categories: Category[] }>('/categories'),
+  useApi<{ budgets: Budget[] }>('/budgets'),
+])
 
 const transactions = computed(() => data.value?.transactions || [])
 const accounts = computed(() => accountsData.value?.accounts || [])
