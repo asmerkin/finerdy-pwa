@@ -4,7 +4,7 @@ import type { Account, Category, Budget } from '~/types'
 
 const { t } = useI18n()
 const router = useRouter()
-const { post } = useApiMutation()
+const { postForm } = useApiMutation()
 const toast = useToast()
 
 // Fetch accounts, categories and budgets
@@ -29,6 +29,9 @@ const form = reactive({
 
 const errors = ref<Record<string, string[]>>({})
 const isSubmitting = ref(false)
+
+// File handling
+const attachments = ref<File[]>([])
 
 const typeOptions = [
   { value: 'income', label: t('transactions.types.income') },
@@ -94,15 +97,42 @@ const handleSubmit = async () => {
   errors.value = {}
 
   try {
-    await post('/transactions', {
-      type: form.type,
-      account_id: Number(form.account_id),
-      category_id: form.category_id ? Number(form.category_id) : null,
-      budget_id: form.budget_id ? Number(form.budget_id) : null,
-      amount: parseFloat(form.amount),
-      description: form.description || null,
-      happened_at: form.happened_at,
-    })
+    // If there are attachments, use FormData
+    if (attachments.value.length > 0) {
+      const formData = new FormData()
+      formData.append('type', form.type)
+      formData.append('account_id', form.account_id)
+      if (form.category_id) {
+        formData.append('category_id', form.category_id)
+      }
+      if (form.budget_id) {
+        formData.append('budget_id', form.budget_id)
+      }
+      formData.append('amount', form.amount)
+      formData.append('description', form.description || '')
+      formData.append('happened_at', form.happened_at)
+
+      // Add attachments
+      attachments.value.forEach((file) => {
+        formData.append('attachments[]', file)
+      })
+
+      await postForm('/transactions', formData)
+    }
+    else {
+      // If no attachments, use regular JSON post
+      const { post } = useApiMutation()
+      await post('/transactions', {
+        type: form.type,
+        account_id: Number(form.account_id),
+        category_id: form.category_id ? Number(form.category_id) : null,
+        budget_id: form.budget_id ? Number(form.budget_id) : null,
+        amount: parseFloat(form.amount),
+        description: form.description || null,
+        happened_at: form.happened_at,
+      })
+    }
+
     toast.success(t('transactions.created'))
     router.push('/transactions')
   }
@@ -227,6 +257,13 @@ const handleSubmit = async () => {
           v-model="form.happened_at"
           :label="t('transactions.dateTime')"
           :error="errors.happened_at?.[0]"
+        />
+
+        <FormsMultipleFileInput
+          v-model="attachments"
+          :label="t('transactions.attachments')"
+          :error="errors.attachments?.[0]"
+          :errors="errors"
         />
 
         <div class="flex justify-end">
