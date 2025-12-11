@@ -50,7 +50,7 @@ export interface Category {
 }
 
 // Transaction types
-export type TransactionType = 'income' | 'outcome' | 'transfer' | 'exchange'
+export type TransactionType = 'income' | 'outcome' | 'transfer' | 'exchange' | 'correction'
 
 export interface Transaction {
   id: number

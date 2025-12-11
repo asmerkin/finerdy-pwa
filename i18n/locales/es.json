@@ -195,7 +195,9 @@
     "updateAccount": "Actualizar Cuenta",
     "saveChanges": "Guardar Cambios",
     "currencyCannotChange": "La moneda no se puede modificar porque esta cuenta tiene transacciones",
-    "deleteConfirm": "¿Estás seguro de que deseas eliminar esta cuenta? Esta acción no se puede deshacer."
+    "deleteConfirm": "¿Estás seguro de que deseas eliminar esta cuenta? Esta acción no se puede deshacer.",
+    "correction": "Corrección",
+    "createCorrection": "Crear Corrección"
   },
 
   "categories": {

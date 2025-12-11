@@ -190,7 +190,9 @@
     "updateAccount": "Update Account",
     "saveChanges": "Save Changes",
     "currencyCannotChange": "Currency cannot be modified because this account has transactions",
-    "deleteConfirm": "Are you sure you want to delete this account? This action cannot be undone."
+    "deleteConfirm": "Are you sure you want to delete this account? This action cannot be undone.",
+    "correction": "Correction",
+    "createCorrection": "Create Correction"
   },
 
   "categories": {

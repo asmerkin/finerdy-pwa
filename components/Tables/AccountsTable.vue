@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, TrashIcon, AdjustmentsHorizontalIcon } from '@heroicons/vue/24/outline'
 import type { Account } from '~/types'
+
+const { t } = useI18n()
 
 const props = withDefaults(defineProps<{
   accounts: Account[]
@@ -74,6 +76,12 @@ const cancelDelete = () => {
         </span>
         <div v-if="showActions" class="flex gap-1">
           <FormsIconButton
+            :to="`/accounts/${account.id}/correction`"
+            :icon="AdjustmentsHorizontalIcon"
+            variant="secondary"
+            size="sm"
+          />
+          <FormsIconButton
             :to="`/accounts/${account.id}/edit`"
             :icon="PencilIcon"
             variant="secondary"
@@ -133,15 +141,22 @@ const cancelDelete = () => {
           <td v-if="showActions" class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
             <div class="flex justify-end gap-2">
               <FormsIconButton
+                :to="`/accounts/${account.id}/correction`"
+                :icon="AdjustmentsHorizontalIcon"
+                :label="t('accounts.correction')"
+                variant="secondary"
+                size="sm"
+              />
+              <FormsIconButton
                 :to="`/accounts/${account.id}/edit`"
                 :icon="PencilIcon"
-                label="Editar"
+                :label="t('common.edit')"
                 variant="secondary"
                 size="sm"
               />
               <FormsIconButton
                 :icon="TrashIcon"
-                label="Eliminar"
+                :label="t('common.delete')"
                 variant="danger"
                 size="sm"
                 @click="openDeleteDialog(account.id)"
