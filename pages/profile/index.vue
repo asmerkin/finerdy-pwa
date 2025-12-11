@@ -51,27 +51,7 @@ const passwordErrors = ref<Record<string, string[]>>({})
 const isPasswordSubmitting = ref(false)
 const passwordSaved = ref(false)
 
-const timezones = [
-  'UTC',
-  'America/New_York',
-  'America/Chicago',
-  'America/Denver',
-  'America/Los_Angeles',
-  'America/Mexico_City',
-  'America/Argentina/Buenos_Aires',
-  'America/Sao_Paulo',
-  'America/Santiago',
-  'America/Bogota',
-  'America/Lima',
-  'Europe/London',
-  'Europe/Paris',
-  'Europe/Madrid',
-  'Europe/Berlin',
-  'Asia/Tokyo',
-  'Asia/Shanghai',
-  'Asia/Dubai',
-  'Australia/Sydney',
-]
+const timezones = Intl.supportedValuesOf('timeZone').filter(tz => !tz.startsWith('Etc/'))
 
 const locales = [
   { code: 'en', name: 'English' },

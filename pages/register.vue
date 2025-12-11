@@ -3,18 +3,46 @@ definePageMeta({
   layout: 'auth',
 })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const auth = useAuthStore()
+const route = useRoute()
 
 const form = reactive({
   name: '',
   email: '',
   password: '',
   password_confirmation: '',
+  token: '',
+  locale: '',
 })
 
 const errors = ref<Record<string, string[]>>({})
 const isSubmitting = ref(false)
+const isEmailFromUrl = ref(false)
+
+// Precargar datos de la URL
+onMounted(() => {
+  // Precargar email si viene en la URL
+  if (route.query.email) {
+    form.email = route.query.email as string
+    isEmailFromUrl.value = true
+  }
+
+  // Guardar token si viene en la URL
+  if (route.query.token) {
+    form.token = route.query.token as string
+  }
+
+  // Guardar y configurar locale si viene en la URL
+  if (route.query.locale) {
+    const urlLocale = route.query.locale as string
+    form.locale = urlLocale
+    // Validar que el locale sea válido antes de asignarlo
+    if (['en', 'es'].includes(urlLocale)) {
+      locale.value = urlLocale as 'en' | 'es'
+    }
+  }
+})
 
 const handleSubmit = async () => {
   isSubmitting.value = true
@@ -63,7 +91,9 @@ const handleSubmit = async () => {
         type="email"
         autocomplete="username"
         required
+        :readonly="isEmailFromUrl"
         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+        :class="{ 'bg-gray-100 cursor-not-allowed': isEmailFromUrl }"
       >
       <p v-if="errors.email" class="mt-2 text-sm text-danger-600">
         {{ errors.email[0] }}
