@@ -90,10 +90,10 @@ const getEditRoute = (transaction: Transaction) => {
   <!-- Delete Confirmation Dialog -->
   <CommonConfirmDialog
     :open="showDeleteDialog"
-    title="Eliminar transacción"
-    message="¿Estás seguro de que deseas eliminar esta transacción? Esta acción no se puede deshacer."
-    confirm-text="Eliminar"
-    cancel-text="Cancelar"
+    :title="t('transactions.deleteTitle')"
+    :message="t('transactions.deleteConfirm')"
+    :confirm-text="t('common.delete')"
+    :cancel-text="t('common.cancel')"
     variant="danger"
     @confirm="confirmDelete"
     @cancel="cancelDelete"
@@ -122,19 +122,19 @@ const getEditRoute = (transaction: Transaction) => {
       <!-- Cuenta + Categoría -->
       <div class="space-y-1">
         <div class="flex items-center gap-2">
-          <span class="text-xs text-gray-500">Cuenta:</span>
+          <span class="text-xs text-gray-500">{{ t('transactions.account') }}:</span>
           <span class="text-sm font-medium text-gray-900">{{ transaction.account?.name || '-' }}</span>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-xs text-gray-500">Categoría:</span>
+          <span class="text-xs text-gray-500">{{ t('transactions.category') }}:</span>
           <span class="text-sm text-gray-700">{{ transaction.category?.name || '-' }}</span>
         </div>
         <div v-if="transaction.budget" class="flex items-center gap-2">
-          <span class="text-xs text-gray-500">Presupuesto:</span>
+          <span class="text-xs text-gray-500">{{ t('transactions.budget') }}:</span>
           <span class="text-sm text-gray-700">{{ transaction.budget.name }}</span>
         </div>
         <div v-if="showCreatedBy && transaction.creator" class="flex items-center gap-2">
-          <span class="text-xs text-gray-500">Creado por:</span>
+          <span class="text-xs text-gray-500">{{ t('transactions.createdBy') }}:</span>
           <span class="text-sm text-gray-700">{{ transaction.creator.name }}</span>
         </div>
       </div>
@@ -146,7 +146,7 @@ const getEditRoute = (transaction: Transaction) => {
 
       <!-- Monto -->
       <div class="flex items-center justify-between">
-        <span class="text-xs text-gray-500">Monto:</span>
+        <span class="text-xs text-gray-500">{{ t('common.amount') }}:</span>
         <span class="text-lg font-semibold" :class="getAmountClass(transaction)">
           {{ formatMoney(transaction.amount, transaction.account?.currency) }}
         </span>
@@ -176,34 +176,34 @@ const getEditRoute = (transaction: Transaction) => {
       <thead class="bg-gray-50">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Fecha
+            {{ t('common.date') }}
           </th>
           <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
             <PaperClipIcon class="h-4 w-4 inline" />
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Tipo
+            {{ t('common.type') }}
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Cuenta
+            {{ t('transactions.account') }}
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Categoría
+            {{ t('transactions.category') }}
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Presupuesto
+            {{ t('transactions.budget') }}
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Descripción
+            {{ t('common.description') }}
           </th>
           <th v-if="showCreatedBy" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Creado por
+            {{ t('transactions.createdBy') }}
           </th>
           <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Monto
+            {{ t('common.amount') }}
           </th>
           <th v-if="showActions" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Acciones
+            {{ t('common.actions') }}
           </th>
         </tr>
       </thead>
@@ -249,13 +249,13 @@ const getEditRoute = (transaction: Transaction) => {
               <FormsIconButton
                 :to="getEditRoute(transaction)"
                 :icon="PencilIcon"
-                label="Editar"
+                :label="t('common.edit')"
                 variant="secondary"
                 size="sm"
               />
               <FormsIconButton
                 :icon="TrashIcon"
-                label="Eliminar"
+                :label="t('common.delete')"
                 variant="danger"
                 size="sm"
                 @click="openDeleteDialog(transaction.id)"

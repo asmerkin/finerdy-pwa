@@ -33,10 +33,10 @@ const isSubmitting = ref(false)
 // File handling
 const attachments = ref<File[]>([])
 
-const typeOptions = [
+const typeOptions = computed(() => [
   { value: 'income', label: t('transactions.types.income') },
   { value: 'outcome', label: t('transactions.types.expense') },
-]
+])
 
 const selectedAccount = computed(() =>
   accounts.value.find(a => a.id === Number(form.account_id)),
@@ -162,12 +162,10 @@ const handleSubmit = async () => {
 
     <CommonCard>
       <form class="space-y-6" @submit.prevent="handleSubmit">
-        <FormsSelect
+        <FormsButtonGroup
           v-model="form.type"
           :label="t('transactions.type')"
           :options="typeOptions"
-          :error="errors.type?.[0]"
-          required
         />
 
         <FormsSelect

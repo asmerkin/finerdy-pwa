@@ -1,12 +1,7 @@
 import type { TransactionType } from '~/types'
 
 export function useTransactionTypes() {
-  const typeLabels: Record<TransactionType, string> = {
-    income: 'Ingreso',
-    outcome: 'Gasto',
-    transfer: 'Transferencia',
-    exchange: 'Cambio',
-  }
+  const { t } = useI18n()
 
   const typeClasses: Record<TransactionType, { bg: string; text: string }> = {
     income: {
@@ -25,10 +20,21 @@ export function useTransactionTypes() {
       bg: 'bg-purple-100',
       text: 'text-purple-800',
     },
+    correction: {
+      bg: 'bg-gray-100',
+      text: 'text-gray-800',
+    },
   }
 
   const getTypeLabel = (type: TransactionType): string => {
-    return typeLabels[type] || type
+    const labels: Record<TransactionType, string> = {
+      income: t('transactions.types.income'),
+      outcome: t('transactions.types.expense'),
+      transfer: t('transactions.types.transfer'),
+      exchange: t('transactions.types.exchange'),
+      correction: t('transactions.types.correction'),
+    }
+    return labels[type] || type
   }
 
   const getTypeClasses = (type: TransactionType) => {
@@ -36,7 +42,6 @@ export function useTransactionTypes() {
   }
 
   return {
-    typeLabels,
     typeClasses,
     getTypeLabel,
     getTypeClasses,
