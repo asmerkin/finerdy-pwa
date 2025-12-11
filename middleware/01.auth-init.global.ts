@@ -5,8 +5,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (import.meta.server) return
 
   const auth = useAuthStore()
-  const toast = useToastStore()
-  const { t } = useI18n()
 
   // Initialize token from localStorage if not already done
   if (!auth.token) {
@@ -21,8 +19,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (auth.token && auth.isTokenExpired()) {
     auth.handleTokenExpiration()
     if (!isPublicPage) {
-      toast.warning(t('auth.sessionExpired'))
-      return navigateTo('/login')
+      return navigateTo('/login?expired=1')
     }
   }
 

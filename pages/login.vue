@@ -6,6 +6,7 @@ definePageMeta({
 const { t } = useI18n()
 const auth = useAuthStore()
 const route = useRoute()
+const toast = useToastStore()
 
 const form = reactive({
   email: '',
@@ -15,6 +16,13 @@ const form = reactive({
 
 const errors = ref<Record<string, string[]>>({})
 const isSubmitting = ref(false)
+
+// Show toast if session expired
+watch(() => route.query.expired, (expired) => {
+  if (expired === '1') {
+    toast.warning(t('auth.sessionExpired'))
+  }
+}, { immediate: true })
 
 // Show success message if redirected from password reset
 const status = computed(() => {
