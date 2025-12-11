@@ -4,6 +4,10 @@ import type { Transaction, Account, Category, Budget } from '~/types'
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
+
+// Get workspace reference currency
+const referenceCurrency = computed(() => auth.workspace?.default_currency || null)
 
 // Filter state from URL query params
 const filters = ref({
@@ -191,6 +195,7 @@ const handleDelete = () => {
     <CommonCard v-else>
       <TablesTransactionsTable
         :transactions="transactions"
+        :reference-currency="referenceCurrency"
         @delete="handleDelete"
       />
     </CommonCard>
