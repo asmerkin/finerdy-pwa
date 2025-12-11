@@ -17,5 +17,6 @@ const ui = useUiStore()
       </main>
     </div>
     <CommonToastContainer />
+    <NavigationFloatingActionButton />
   </div>
 </template>

@@ -194,8 +194,5 @@ const handleDelete = () => {
         @delete="handleDelete"
       />
     </CommonCard>
-
-    <!-- Floating Action Button -->
-    <NavigationFloatingActionButton />
   </div>
 </template>
