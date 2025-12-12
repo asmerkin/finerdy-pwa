@@ -1,5 +1,20 @@
 import type { UseFetchOptions } from 'nuxt/app'
 
+// Serialize params with PHP-style array notation (e.g., accounts[]=1&accounts[]=2)
+function serializeParams(params: Record<string, any>): Record<string, any> {
+  const result: Record<string, any> = {}
+  for (const [key, value] of Object.entries(params)) {
+    if (Array.isArray(value)) {
+      // Convert array to PHP-style notation: key[] for each value
+      result[`${key}[]`] = value
+    }
+    else {
+      result[key] = value
+    }
+  }
+  return result
+}
+
 export function useApi<T>(
   url: string | (() => string),
   options: UseFetchOptions<T> = {},
@@ -53,8 +68,17 @@ export function useApi<T>(
     return headers
   }
 
+  // Process query params to serialize arrays for PHP (Laravel)
+  const processedOptions = { ...options }
+  if (options.query) {
+    processedOptions.query = computed(() => {
+      const rawQuery = toValue(options.query)
+      return rawQuery ? serializeParams(rawQuery) : rawQuery
+    })
+  }
+
   return useFetch<T>(buildUrl, {
-    ...options,
+    ...processedOptions,
     headers: buildHeaders(),
   })
 }

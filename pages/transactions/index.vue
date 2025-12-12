@@ -46,7 +46,7 @@ const [
   { data: categoriesData },
   { data: budgetsData },
 ] = await Promise.all([
-  useApi<{ transactions: Transaction[] }>('/transactions', { params: queryParams }),
+  useApi<{ transactions: Transaction[] }>('/transactions', { query: queryParams }),
   useApi<{ accounts: Account[] }>('/accounts'),
   useApi<{ categories: Category[] }>('/categories'),
   useApi<{ budgets: Budget[] }>('/budgets'),
