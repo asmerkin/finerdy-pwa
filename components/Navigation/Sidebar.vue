@@ -117,9 +117,7 @@ const gravatarUrl = computed(() => {
         class="flex items-center gap-2 transition-opacity duration-300 overflow-hidden"
         :class="{ 'lg:opacity-0 lg:w-0': ui.isSidebarCollapsed }"
       >
-        <div class="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center">
-          <span class="text-white font-bold text-lg">F</span>
-        </div>
+        <img src="/favicon.svg" alt="Finerdy" class="h-8 w-8" />
         <span class="text-lg font-bold text-gray-900">Finerdy</span>
       </NuxtLink>
       <div class="flex gap-2">
