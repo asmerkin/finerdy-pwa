@@ -73,18 +73,12 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(email: string, password: string, remember: boolean = false) {
     isLoading.value = true
     try {
-      const response = await $fetch<{
+      const api = useApiMutation()
+      const response = await api.post<{
         token: string
         expires_at: string
         user: { id: number; name: string; email: string }
-      }>(`${apiBase}/api/login`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: { email, password, remember },
-      })
+      }>('/login', { email, password, remember })
 
       setToken(response.token, response.expires_at)
       await fetchUser()
@@ -110,18 +104,12 @@ export const useAuthStore = defineStore('auth', () => {
   }) {
     isLoading.value = true
     try {
-      const response = await $fetch<{
+      const api = useApiMutation()
+      const response = await api.post<{
         token: string
         expires_at: string
         user: { id: number; name: string; email: string }
-      }>(`${apiBase}/api/register`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: data,
-      })
+      }>('/register', data)
 
       setToken(response.token, response.expires_at)
       await fetchUser()
