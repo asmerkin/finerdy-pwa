@@ -50,6 +50,8 @@ export default defineNuxtConfig({
     public: {
       // Direct call to Laravel backend
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost',
+      // PWA Client Authentication - API Key to access backend
+      pwaApiKey: process.env.NUXT_PUBLIC_PWA_API_KEY || '',
     },
   },
 

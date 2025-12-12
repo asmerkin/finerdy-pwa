@@ -30,13 +30,23 @@ export function useApi<T>(
     return `${config.public.apiBase}/api${baseUrl}`
   }
 
-  // Build headers with Bearer token
+  // Build headers with Bearer token and PWA API Key
   const buildHeaders = () => {
     const headers: Record<string, string> = {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string> || {}),
     }
+
+    // Merge custom headers from options
+    if (options.headers) {
+      Object.assign(headers, options.headers)
+    }
+
+    // Add PWA API Key for backend authentication
+    if (config.public.pwaApiKey) {
+      headers['X-PWA-Key'] = config.public.pwaApiKey
+    }
+
     if (auth.token) {
       headers.Authorization = `Bearer ${auth.token}`
     }
@@ -74,12 +84,18 @@ export function useApiMutation() {
     return `${config.public.apiBase}/api${path}`
   }
 
-  // Build headers with Bearer token
+  // Build headers with Bearer token and PWA API Key
   const buildHeaders = () => {
     const headers: Record<string, string> = {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     }
+
+    // Add PWA API Key for backend authentication
+    if (config.public.pwaApiKey) {
+      headers['X-PWA-Key'] = config.public.pwaApiKey
+    }
+
     if (auth.token) {
       headers.Authorization = `Bearer ${auth.token}`
     }
@@ -111,6 +127,12 @@ export function useApiMutation() {
     const headers: Record<string, string> = {
       'Accept': 'application/json',
     }
+
+    // Add PWA API Key for backend authentication
+    if (config.public.pwaApiKey) {
+      headers['X-PWA-Key'] = config.public.pwaApiKey
+    }
+
     if (auth.token) {
       headers.Authorization = `Bearer ${auth.token}`
     }
@@ -127,6 +149,12 @@ export function useApiMutation() {
     const headers: Record<string, string> = {
       'Accept': 'application/json',
     }
+
+    // Add PWA API Key for backend authentication
+    if (config.public.pwaApiKey) {
+      headers['X-PWA-Key'] = config.public.pwaApiKey
+    }
+
     if (auth.token) {
       headers.Authorization = `Bearer ${auth.token}`
     }
