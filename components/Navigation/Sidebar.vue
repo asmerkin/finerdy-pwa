@@ -93,21 +93,14 @@ const gravatarUrl = computed(() => {
 </script>
 
 <template>
-  <!-- Mobile backdrop -->
-  <div
-    v-if="ui.isSidebarOpen"
-    class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40 lg:hidden"
-    @click="ui.closeSidebar"
-  />
-
   <!-- Sidebar -->
   <aside
     :class="[
       'fixed inset-y-0 left-0 z-50 bg-white border-r border-gray-200 transform transition-all duration-300 ease-in-out flex flex-col',
-      'lg:translate-x-0 lg:fixed',
-      ui.isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
+      'lg:translate-x-0 lg:fixed lg:shadow-none',
+      ui.isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full shadow-none',
       ui.isSidebarCollapsed ? 'lg:w-16' : 'lg:w-64',
-      'w-64',
+      ui.isSidebarOpen ? 'w-72' : 'w-64',
     ]"
   >
     <!-- Header -->
