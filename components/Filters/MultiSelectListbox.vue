@@ -24,9 +24,14 @@ const emit = defineEmits<{
   'update:modelValue': [value: number[]]
 }>()
 
+const haptics = useHaptics()
+
 const selected = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value),
+  set: (value) => {
+    haptics.selection()
+    emit('update:modelValue', value)
+  },
 })
 
 const displayText = computed(() => {

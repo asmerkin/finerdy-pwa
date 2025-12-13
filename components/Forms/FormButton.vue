@@ -17,6 +17,19 @@ const props = withDefaults(defineProps<{
   size: 'md',
 })
 
+const haptics = useHaptics()
+
+const handleClick = () => {
+  if (props.disabled || props.loading) return
+
+  // Feedback háptico según la variante del botón
+  if (props.variant === 'danger') {
+    haptics.medium() // Acciones peligrosas
+  } else {
+    haptics.light() // Acciones normales
+  }
+}
+
 const variantClasses: Record<Variant, string> = {
   primary: 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 text-white border-transparent',
   secondary: 'bg-white hover:bg-gray-50 focus:ring-primary-500 text-gray-700 border-gray-300',
@@ -45,6 +58,7 @@ const buttonClasses = computed(() => [
     v-if="to"
     :to="to"
     :class="buttonClasses"
+    @click="handleClick"
   >
     <CommonLoadingSpinner v-if="loading" size="sm" class="mr-2" />
     <slot />
@@ -54,6 +68,7 @@ const buttonClasses = computed(() => [
     :type="type"
     :disabled="isDisabled"
     :class="buttonClasses"
+    @click="handleClick"
   >
     <CommonLoadingSpinner v-if="loading" size="sm" class="mr-2" />
     <slot />

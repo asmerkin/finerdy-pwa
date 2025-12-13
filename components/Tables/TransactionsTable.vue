@@ -23,12 +23,14 @@ const { formatMoney } = useMoney()
 const { formatDateTime } = useDate()
 const { post, del } = useApiMutation()
 const toast = useToast()
+const haptics = useHaptics()
 
 const selectedTransaction = ref<Transaction | null>(null)
 const showDeleteDialog = ref(false)
 const transactionToDelete = ref<number | null>(null)
 
 const openDetailModal = (transaction: Transaction) => {
+  haptics.light()
   selectedTransaction.value = transaction
 }
 
@@ -37,6 +39,7 @@ const closeDetailModal = () => {
 }
 
 const openDeleteDialog = (transactionId: number) => {
+  haptics.medium()
   transactionToDelete.value = transactionId
   showDeleteDialog.value = true
 }

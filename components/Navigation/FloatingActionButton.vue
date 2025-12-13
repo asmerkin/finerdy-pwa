@@ -7,14 +7,25 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const { t } = useI18n()
+const haptics = useHaptics()
 const isMenuOpen = ref(false)
 
 const toggleMenu = () => {
+  // Feedback háptico medio al abrir/cerrar el menú
+  haptics.medium()
   isMenuOpen.value = !isMenuOpen.value
 }
 
 const closeMenu = () => {
+  // Feedback háptico ligero al cerrar
+  haptics.light()
   isMenuOpen.value = false
+}
+
+const handleActionClick = () => {
+  // Feedback háptico de selección al elegir una opción
+  haptics.selection()
+  closeMenu()
 }
 
 const actions = computed(() => [
@@ -67,7 +78,7 @@ const actions = computed(() => [
           :key="action.name"
           :to="action.href"
           class="flex items-center gap-3 bg-white rounded-lg shadow-lg border border-gray-200 px-4 py-3 hover:bg-gray-50 transition-colors min-w-[200px]"
-          @click="closeMenu"
+          @click="handleActionClick"
         >
           <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center">
             <component :is="action.icon" class="h-5 w-5 text-primary-600" />

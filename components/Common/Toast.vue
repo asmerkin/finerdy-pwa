@@ -22,6 +22,31 @@ const emit = defineEmits<{
   close: []
 }>()
 
+const haptics = useHaptics()
+
+// Trigger haptic feedback cuando aparece el toast
+onMounted(() => {
+  switch (props.toast.type) {
+    case 'success':
+      haptics.success()
+      break
+    case 'error':
+      haptics.error()
+      break
+    case 'warning':
+      haptics.medium()
+      break
+    case 'info':
+      haptics.light()
+      break
+  }
+})
+
+const handleClose = () => {
+  haptics.light()
+  emit('close')
+}
+
 const icon = computed(() => {
   switch (props.toast.type) {
     case 'success':
@@ -95,7 +120,7 @@ const textColor = computed(() => {
         <div class="ml-4 flex flex-shrink-0">
           <button
             type="button"
-            @click="emit('close')"
+            @click="handleClose"
             :class="[
               'inline-flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2',
               textColor,

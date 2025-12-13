@@ -40,6 +40,7 @@ const emit = defineEmits<{
 }>()
 
 const { formatDate } = useDate()
+const haptics = useHaptics()
 
 const hasActiveFilters = computed(() => {
   return (
@@ -67,10 +68,12 @@ const getBudgetName = (budgetId: number): string => {
 }
 
 const removePill = (filterKey: string, valueId?: number) => {
+  haptics.selection()
   emit('remove', filterKey, valueId)
 }
 
 const clearAll = () => {
+  haptics.medium()
   emit('clearAll')
 }
 </script>
