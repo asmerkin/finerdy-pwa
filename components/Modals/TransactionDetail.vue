@@ -12,10 +12,14 @@ interface Media {
 
 interface FullTransaction extends Transaction {
   media?: Media[]
-  related?: Transaction & {
+  origin?: Transaction & {
     account?: Account
     exchange_difference?: string | null
   }
+  destinations?: (Transaction & {
+    account?: Account
+    exchange_difference?: string | null
+  })[]
   creator?: {
     id: number
     name: string
@@ -35,6 +39,7 @@ const emit = defineEmits<{
 
 const { formatMoney } = useMoney()
 const { formatDateTime } = useDate()
+const { t } = useI18n()
 
 const isOpen = computed(() => props.transaction !== null)
 const fullTransaction = ref<FullTransaction | null>(null)
@@ -74,6 +79,62 @@ watch(() => props.transaction, async (newTransaction, oldTransaction) => {
 
 const displayTransaction = computed(() => fullTransaction.value || props.transaction)
 
+// Get all related transactions (could be origin or destinations depending on current transaction)
+const relatedTransactions = computed(() => {
+  const current = displayTransaction.value as FullTransaction
+  if (!current) return []
+
+  const related: Transaction[] = []
+
+  // If this transaction has destinations, add them
+  if (current.destinations && current.destinations.length > 0) {
+    related.push(...current.destinations)
+  }
+
+  // If this transaction has an origin, add it
+  if (current.origin) {
+    related.push(current.origin)
+  }
+
+  return related
+})
+
+// Check if there are any related transactions
+const hasRelatedTransactions = computed(() => relatedTransactions.value.length > 0)
+
+// Get the label for related transactions section
+const relatedTransactionsLabel = computed(() => {
+  const current = displayTransaction.value as FullTransaction
+  if (!current) return ''
+
+  // If this transaction has destinations, we're showing the destinations
+  if (current.destinations && current.destinations.length > 0) {
+    return current.destinations.length === 1
+      ? t('transactionModal.destinationTransaction')
+      : t('transactionModal.destinationTransactions')
+  }
+
+  // If this transaction has an origin, we're showing the origin
+  if (current.origin) {
+    return t('transactionModal.originTransaction')
+  }
+
+  return ''
+})
+
+// Get the label for the edit button
+const editButtonLabel = computed(() => {
+  const current = displayTransaction.value as FullTransaction
+  if (!current) return t('transactionModal.edit')
+
+  // If this is a destination transaction (has origin), we'll be editing the origin
+  if (current.origin) {
+    return t('transactionModal.editOrigin')
+  }
+
+  return t('transactionModal.edit')
+})
+
 // exchange_difference is stored on the destination transaction (positive amount)
 const exchangeDifference = computed(() => {
   if (!displayTransaction.value || displayTransaction.value.type !== 'exchange') {
@@ -82,9 +143,13 @@ const exchangeDifference = computed(() => {
   if (displayTransaction.value.exchange_difference) {
     return displayTransaction.value.exchange_difference
   }
-  const related = (displayTransaction.value as FullTransaction).related
-  if (related?.exchange_difference) {
-    return related.exchange_difference
+  const dests = (displayTransaction.value as FullTransaction).destinations
+  if (dests && dests.length > 0 && dests[0].exchange_difference) {
+    return dests[0].exchange_difference
+  }
+  const orig = (displayTransaction.value as FullTransaction).origin
+  if (orig?.exchange_difference) {
+    return orig.exchange_difference
   }
   return null
 })
@@ -104,21 +169,22 @@ const closeModal = () => {
   emit('close')
 }
 
-const viewRelatedTransaction = () => {
-  const related = (displayTransaction.value as FullTransaction)?.related
-  if (related) {
-    emit('viewRelated', related as Transaction)
-  }
+const viewRelatedTransaction = (transaction: Transaction) => {
+  emit('viewRelated', transaction)
 }
 
 const getEditRoute = (transaction: Transaction) => {
+  // If this is a destination transaction (has origin), redirect to edit the origin instead
+  const fullTx = transaction as FullTransaction
+  const editId = fullTx.origin ? fullTx.origin.id : transaction.id
+
   switch (transaction.type) {
     case 'transfer':
-      return `/transactions/transfer/${transaction.id}/edit`
+      return `/transactions/transfer/${editId}/edit`
     case 'exchange':
-      return `/transactions/exchange/${transaction.id}/edit`
+      return `/transactions/exchange/${editId}/edit`
     default:
-      return `/transactions/${transaction.id}/edit`
+      return `/transactions/${editId}/edit`
   }
 }
 
@@ -258,31 +324,37 @@ onUnmounted(() => {
                 </div>
               </div>
 
-              <!-- Transacción Relacionada (para transfers y exchanges) -->
-              <div v-if="(displayTransaction as FullTransaction).related" class="border-t border-gray-200 pt-6">
+              <!-- Transacciones Relacionadas (para transfers y exchanges) -->
+              <div v-if="hasRelatedTransactions" class="border-t border-gray-200 pt-6">
                 <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
-                  Transacción Relacionada
+                  {{ relatedTransactionsLabel }}
                 </label>
-                <div class="bg-blue-50 rounded-lg p-4 space-y-3">
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-600">Cuenta:</span>
-                    <span class="text-sm font-medium text-gray-900">
-                      {{ (displayTransaction as FullTransaction).related?.account?.name }}
-                    </span>
-                  </div>
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-600">Monto:</span>
-                    <span class="text-sm font-semibold text-gray-900">
-                      {{ formatMoney((displayTransaction as FullTransaction).related?.amount, (displayTransaction as FullTransaction).related?.account?.currency) }}
-                    </span>
-                  </div>
-                  <div class="pt-2 border-t border-blue-200">
-                    <button
-                      class="text-xs text-primary-600 hover:text-primary-700 hover:underline transition-colors"
-                      @click="viewRelatedTransaction"
-                    >
-                      Ver detalles →
-                    </button>
+                <div class="space-y-3">
+                  <div
+                    v-for="related in relatedTransactions"
+                    :key="related.id"
+                    class="bg-blue-50 rounded-lg p-4 space-y-3"
+                  >
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm text-gray-600">Cuenta:</span>
+                      <span class="text-sm font-medium text-gray-900">
+                        {{ related.account?.name }}
+                      </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm text-gray-600">Monto:</span>
+                      <span class="text-sm font-semibold text-gray-900">
+                        {{ formatMoney(related.amount, related.account?.currency) }}
+                      </span>
+                    </div>
+                    <div class="pt-2 border-t border-blue-200">
+                      <button
+                        class="text-xs text-primary-600 hover:text-primary-700 hover:underline transition-colors"
+                        @click="viewRelatedTransaction(related)"
+                      >
+                        Ver detalles →
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -373,7 +445,7 @@ onUnmounted(() => {
                 :to="getEditRoute(displayTransaction)"
                 class="px-4 py-2 text-sm font-medium text-primary-700 bg-white border border-primary-300 rounded-md hover:bg-primary-50 transition-colors"
               >
-                Editar
+                {{ editButtonLabel }}
               </NuxtLink>
               <button
                 class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"

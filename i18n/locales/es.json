@@ -474,6 +474,9 @@
     "amount": "Monto",
     "referenceAmount": "Monto Referencia",
     "relatedTransaction": "Transacción Relacionada",
+    "originTransaction": "Transacción Origen",
+    "destinationTransaction": "Transacción Destino",
+    "destinationTransactions": "Transacciones Destino",
     "viewDetails": "Ver detalles",
     "exchangeEfficiency": "Eficiencia del Cambio",
     "gainVsMarket": "Ganancia vs. tasa de mercado:",
@@ -482,6 +485,8 @@
     "attachments": "Archivos Adjuntos",
     "createdBy": "Creado por",
     "created": "Creado",
-    "updated": "Actualizado"
+    "updated": "Actualizado",
+    "edit": "Editar",
+    "editOrigin": "Editar Origen"
   }
 }

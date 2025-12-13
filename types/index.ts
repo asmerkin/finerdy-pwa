@@ -65,7 +65,6 @@ export interface Transaction {
   happened_at: string
   account_id: number
   category_id: number | null
-  related_id: number | null
   budget_id: number | null
   created_by: number | null
   workspace_id: number
@@ -73,16 +72,10 @@ export interface Transaction {
   account?: Account
   category?: Category | null
   budget?: Budget | null
-  related?: {
-    id: number
-    workspace_id: number
-    account_id: number
-    type: TransactionType
-    amount: string
-    currency: string
-    description: string | null
-    happened_at: string
-  }
+  // For transfers and exchanges - origin is the transaction being sent/debited
+  origin?: Transaction
+  // For transfers and exchanges - destinations are the transactions being received/credited (can be multiple)
+  destinations?: Transaction[]
   creator?: {
     id: number
     name: string

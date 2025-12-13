@@ -465,6 +465,9 @@
     "amount": "Amount",
     "referenceAmount": "Reference Amount",
     "relatedTransaction": "Related Transaction",
+    "originTransaction": "Origin Transaction",
+    "destinationTransaction": "Destination Transaction",
+    "destinationTransactions": "Destination Transactions",
     "viewDetails": "View details",
     "exchangeEfficiency": "Exchange Efficiency",
     "gainVsMarket": "Gain vs. market rate:",
@@ -473,6 +476,8 @@
     "attachments": "Attachments",
     "createdBy": "Created by",
     "created": "Created",
-    "updated": "Updated"
+    "updated": "Updated",
+    "edit": "Edit",
+    "editOrigin": "Edit Origin"
   }
 }

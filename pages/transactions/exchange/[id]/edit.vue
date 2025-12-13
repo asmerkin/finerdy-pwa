@@ -12,9 +12,12 @@ interface Media {
 
 interface TransactionWithMedia extends Transaction {
   media?: Media[]
-  related?: Transaction & {
+  origin?: Transaction & {
     account?: Account
   }
+  destinations?: (Transaction & {
+    account?: Account
+  })[]
 }
 
 const route = useRoute()
@@ -64,12 +67,20 @@ const handleRemoveExisting = (mediaId: number) => {
 // Initialize form when data loads
 watch(transactionData, (newData) => {
   if (newData) {
+    // If this transaction has an origin, it means it's a destination
+    // We should redirect to edit the origin instead
+    if (newData.origin) {
+      console.warn('Attempting to edit a destination transaction, redirecting to origin')
+      router.replace(`/transactions/exchange/${newData.origin.id}/edit`)
+      return
+    }
+
     const t = newData
-    const related = newData.related
+    const destination = newData.destinations?.[0] // For now, we only handle one destination
     form.origin_account_id = String(t.account_id)
-    form.destination_account_id = related ? String(related.account_id) : ''
+    form.destination_account_id = destination ? String(destination.account_id) : ''
     form.origin_amount = String(Math.abs(parseFloat(t.amount)))
-    form.destination_amount = related ? String(Math.abs(parseFloat(related.amount))) : ''
+    form.destination_amount = destination ? String(Math.abs(parseFloat(destination.amount))) : ''
     form.description = t.description || ''
     if (t.happened_at) {
       form.happened_at = t.happened_at
