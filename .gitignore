@@ -29,3 +29,10 @@ logs
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# PWA Generated Assets (auto-generated at build time)
+public/pwa-*.png
+public/maskable-icon-*.png
+public/apple-touch-icon-*.png
+public/apple-splash-*.png
+public/favicon.ico

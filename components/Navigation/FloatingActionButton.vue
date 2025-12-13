@@ -17,8 +17,6 @@ const toggleMenu = () => {
 }
 
 const closeMenu = () => {
-  // Feedback háptico ligero al cerrar
-  haptics.light()
   isMenuOpen.value = false
 }
 
@@ -59,7 +57,7 @@ const actions = computed(() => [
   />
 
   <!-- FAB Container -->
-  <div class="fixed bottom-6 right-6 z-50">
+  <div class="fixed bottom-6 right-6 z-50 safe-bottom safe-right">
     <!-- Menu Options -->
     <Transition
       enter-active-class="transition ease-out duration-200"

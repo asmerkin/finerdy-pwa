@@ -69,25 +69,16 @@ export default defineNuxtConfig({
       orientation: 'portrait',
       scope: '/',
       start_url: '/',
-      icons: [
-        {
-          src: '/icons/icon-192.png',
-          sizes: '192x192',
-          type: 'image/png',
-        },
-        {
-          src: '/icons/icon-512.png',
-          sizes: '512x512',
-          type: 'image/png',
-        },
-        {
-          src: '/icons/icon-512.png',
-          sizes: '512x512',
-          type: 'image/png',
-          purpose: 'maskable',
-        },
-      ],
     },
+    pwaAssets: {
+      disabled: false,
+      config: true,
+      integration: {
+        baseUrl: '/',
+        publicDir: 'public',
+      },
+    },
+    includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon-180x180.png'],
     workbox: {
       navigateFallback: '/',
       navigateFallbackDenylist: [/^\/api\//, /^\/_nuxt\//],
@@ -155,16 +146,18 @@ export default defineNuxtConfig({
       title: 'Finerdy',
       meta: [
         { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { name: 'description', content: 'Personal finance management' },
         { name: 'theme-color', content: '#ef4444' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+        { name: 'apple-mobile-web-app-title', content: 'Finerdy' },
       ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
-        { rel: 'alternate icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'apple-touch-icon', href: '/icons/icon-192.png' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon-180x180.png', sizes: '180x180' },
+        { rel: 'manifest', href: '/manifest.webmanifest' },
         {
           rel: 'preconnect',
           href: 'https://fonts.googleapis.com',
