@@ -4,14 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "npm run generate:splash && nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "generate:pwa-assets": "pwa-assets-generator --preset minimal-2023 public/favicon.svg"
+    "generate:pwa-assets": "pwa-assets-generator --config pwa-assets.config.js",
+    "generate:splash": "node scripts/generate-splash-screens.mjs"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
@@ -30,6 +31,7 @@
     "@types/node": "^22.10.2",
     "@vite-pwa/assets-generator": "^0.2.6",
     "@vite-pwa/nuxt": "^0.10.6",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.1.0",
     "typescript": "^5.7.2"
   },

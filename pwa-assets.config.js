@@ -3,7 +3,8 @@ import {
   minimal2023Preset,
 } from '@vite-pwa/assets-generator/config'
 
-// Configuración personalizada para splash screens
+// Configuración simple - solo iconos
+// Los splash screens tienen bugs en el CLI, se generarán vía @vite-pwa/nuxt
 const customPreset = {
   ...minimal2023Preset,
   transparent: {
