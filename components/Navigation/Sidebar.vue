@@ -17,6 +17,7 @@ const { t } = useI18n()
 const route = useRoute()
 const auth = useAuthStore()
 const ui = useUiStore()
+const haptics = useHaptics()
 
 const isSettingsOpen = ref(false)
 
@@ -37,6 +38,7 @@ watchEffect(() => {
 })
 
 const toggleSettings = () => {
+  haptics.light()
   isSettingsOpen.value = !isSettingsOpen.value
 }
 
@@ -70,10 +72,22 @@ const settingsNavigation = computed(() => [
 ])
 
 const handleNavClick = () => {
+  haptics.selection()
+  ui.closeSidebar()
+}
+
+const handleToggleCollapsed = () => {
+  haptics.light()
+  ui.toggleCollapsed()
+}
+
+const handleCloseSidebar = () => {
+  haptics.light()
   ui.closeSidebar()
 }
 
 const switchWorkspace = async (event: Event) => {
+  haptics.medium()
   const target = event.target as HTMLSelectElement
   const workspaceId = parseInt(target.value)
   await auth.switchWorkspace(workspaceId)
@@ -115,7 +129,7 @@ const gravatarUrl = computed(() => {
       </NuxtLink>
       <div class="flex gap-2">
         <button
-          @click="ui.toggleCollapsed"
+          @click="handleToggleCollapsed"
           class="hidden lg:block p-2 rounded-md text-gray-500 hover:bg-gray-100 transition-colors"
           :title="ui.isSidebarCollapsed ? t('nav.expandSidebar') : t('nav.collapseSidebar')"
         >
@@ -123,7 +137,7 @@ const gravatarUrl = computed(() => {
           <ChevronRightIcon v-else class="h-5 w-5" />
         </button>
         <button
-          @click="ui.closeSidebar"
+          @click="handleCloseSidebar"
           class="lg:hidden p-2 rounded-md text-gray-500 hover:bg-gray-100"
         >
           <XMarkIcon class="h-5 w-5" />

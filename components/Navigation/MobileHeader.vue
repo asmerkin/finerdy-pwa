@@ -8,6 +8,12 @@ withDefaults(defineProps<{
 })
 
 const ui = useUiStore()
+const haptics = useHaptics()
+
+const handleToggleSidebar = () => {
+  haptics.light()
+  ui.toggleSidebar()
+}
 </script>
 
 <template>
@@ -20,7 +26,7 @@ const ui = useUiStore()
     >
       <button
         class="p-2 rounded-md text-gray-500 hover:bg-gray-100"
-        @click="ui.toggleSidebar"
+        @click="handleToggleSidebar"
       >
         <Bars3Icon class="h-6 w-6" />
       </button>

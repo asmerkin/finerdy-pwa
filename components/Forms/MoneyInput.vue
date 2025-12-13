@@ -14,12 +14,15 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
+const haptics = useHaptics()
 const localValue = ref(String(props.modelValue || ''))
+const previousLength = ref(localValue.value.length)
 
 const displayCurrency = computed(() => props.currency || 'USD')
 
 watch(() => props.modelValue, (newValue) => {
   localValue.value = String(newValue || '')
+  previousLength.value = localValue.value.length
 })
 
 const handleInput = (event: Event) => {
@@ -42,6 +45,13 @@ const handleInput = (event: Event) => {
   if (parts.length > 2) {
     value = parts[0] + '.' + parts.slice(1).join('')
   }
+
+  // Feedback háptico solo cuando se agrega un carácter (no al borrar)
+  const currentLength = value.length
+  if (currentLength > previousLength.value) {
+    haptics.selection()
+  }
+  previousLength.value = currentLength
 
   localValue.value = value
   emit('update:modelValue', value)
