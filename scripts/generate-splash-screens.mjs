@@ -9,34 +9,62 @@ const publicDir = resolve(__dirname, '../public')
 // Tamaños de splash screens para iOS
 // Basado en: https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/
 const SPLASH_SCREENS = [
-  // iPhone SE, iPhone 8
+  // iPhone SE, iPhone 8 - Portrait
   { width: 750, height: 1334, name: 'apple-splash-750-1334' },
-  // iPhone 8 Plus, iPhone 7 Plus, iPhone 6s Plus
+  // iPhone SE, iPhone 8 - Landscape
+  { width: 1334, height: 750, name: 'apple-splash-1334-750' },
+  // iPhone 8 Plus, iPhone 7 Plus, iPhone 6s Plus - Portrait
   { width: 1242, height: 2208, name: 'apple-splash-1242-2208' },
-  // iPhone 11 Pro, iPhone X, iPhone XS
+  // iPhone 8 Plus, iPhone 7 Plus, iPhone 6s Plus - Landscape
+  { width: 2208, height: 1242, name: 'apple-splash-2208-1242' },
+  // iPhone 11 Pro, iPhone X, iPhone XS - Portrait
   { width: 1125, height: 2436, name: 'apple-splash-1125-2436' },
-  // iPhone 11, iPhone XR
+  // iPhone 11 Pro, iPhone X, iPhone XS - Landscape
+  { width: 2436, height: 1125, name: 'apple-splash-2436-1125' },
+  // iPhone 11, iPhone XR - Portrait
   { width: 828, height: 1792, name: 'apple-splash-828-1792' },
-  // iPhone 11 Pro Max, iPhone XS Max
+  // iPhone 11, iPhone XR - Landscape
+  { width: 1792, height: 828, name: 'apple-splash-1792-828' },
+  // iPhone 11 Pro Max, iPhone XS Max - Portrait
   { width: 1242, height: 2688, name: 'apple-splash-1242-2688' },
-  // iPhone 12 mini, iPhone 13 mini
+  // iPhone 11 Pro Max, iPhone XS Max - Landscape
+  { width: 2688, height: 1242, name: 'apple-splash-2688-1242' },
+  // iPhone 12 mini, iPhone 13 mini - Portrait
   { width: 1080, height: 2340, name: 'apple-splash-1080-2340' },
-  // iPhone 12, iPhone 12 Pro, iPhone 13, iPhone 13 Pro, iPhone 14
+  // iPhone 12 mini, iPhone 13 mini - Landscape
+  { width: 2340, height: 1080, name: 'apple-splash-2340-1080' },
+  // iPhone 12, iPhone 12 Pro, iPhone 13, iPhone 13 Pro, iPhone 14 - Portrait
   { width: 1170, height: 2532, name: 'apple-splash-1170-2532' },
-  // iPhone 12 Pro Max, iPhone 13 Pro Max, iPhone 14 Plus
+  // iPhone 12, iPhone 12 Pro, iPhone 13, iPhone 13 Pro, iPhone 14 - Landscape
+  { width: 2532, height: 1170, name: 'apple-splash-2532-1170' },
+  // iPhone 12 Pro Max, iPhone 13 Pro Max, iPhone 14 Plus - Portrait
   { width: 1284, height: 2778, name: 'apple-splash-1284-2778' },
-  // iPhone 14 Pro
+  // iPhone 12 Pro Max, iPhone 13 Pro Max, iPhone 14 Plus - Landscape
+  { width: 2778, height: 1284, name: 'apple-splash-2778-1284' },
+  // iPhone 14 Pro - Portrait
   { width: 1179, height: 2556, name: 'apple-splash-1179-2556' },
-  // iPhone 14 Pro Max
+  // iPhone 14 Pro - Landscape
+  { width: 2556, height: 1179, name: 'apple-splash-2556-1179' },
+  // iPhone 14 Pro Max - Portrait
   { width: 1290, height: 2796, name: 'apple-splash-1290-2796' },
-  // iPad Mini, iPad Air
+  // iPhone 14 Pro Max - Landscape
+  { width: 2796, height: 1290, name: 'apple-splash-2796-1290' },
+  // iPad Mini, iPad Air - Portrait
   { width: 1536, height: 2048, name: 'apple-splash-1536-2048' },
-  // iPad Pro 10.5"
+  // iPad Mini, iPad Air - Landscape
+  { width: 2048, height: 1536, name: 'apple-splash-2048-1536' },
+  // iPad Pro 10.5" - Portrait
   { width: 1668, height: 2224, name: 'apple-splash-1668-2224' },
-  // iPad Pro 11"
+  // iPad Pro 10.5" - Landscape
+  { width: 2224, height: 1668, name: 'apple-splash-2224-1668' },
+  // iPad Pro 11" - Portrait
   { width: 1668, height: 2388, name: 'apple-splash-1668-2388' },
-  // iPad Pro 12.9"
+  // iPad Pro 11" - Landscape
+  { width: 2388, height: 1668, name: 'apple-splash-2388-1668' },
+  // iPad Pro 12.9" - Portrait
   { width: 2048, height: 2732, name: 'apple-splash-2048-2732' },
+  // iPad Pro 12.9" - Landscape
+  { width: 2732, height: 2048, name: 'apple-splash-2732-2048' },
 ]
 
 const BACKGROUND_COLOR = '#f9fafb' // Mismo que manifest.webmanifest background_color
