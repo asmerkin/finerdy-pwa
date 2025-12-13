@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { XMarkIcon, PaperClipIcon, DocumentIcon, PhotoIcon } from '@heroicons/vue/24/outline'
+import { XMarkIcon, PaperClipIcon, DocumentIcon, PhotoIcon, PencilIcon } from '@heroicons/vue/24/outline'
 import type { Transaction, Account } from '~/types'
 
 interface Media {
@@ -238,30 +238,43 @@ onUnmounted(() => {
           class="fixed inset-0 flex items-center justify-center p-4"
           @click="handleBackdropClick"
         >
-          <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" @click.stop>
-            <!-- Header -->
-            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+          <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col" @click.stop>
+            <!-- Header - Fixed -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 shrink-0">
               <div class="flex items-center gap-3">
                 <h3 class="text-lg font-semibold text-gray-900">
                   Transacción #{{ displayTransaction?.id }}
                 </h3>
                 <CommonBadge v-if="displayTransaction" :type="displayTransaction.type" />
               </div>
-              <button
-                class="text-gray-400 hover:text-gray-600 transition-colors"
-                @click="closeModal"
-              >
-                <XMarkIcon class="h-6 w-6" />
-              </button>
+              <div class="flex items-center gap-1">
+                <!-- Edit Button -->
+                <NuxtLink
+                  v-if="displayTransaction"
+                  :to="getEditRoute(displayTransaction)"
+                  class="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                  :title="editButtonLabel"
+                >
+                  <PencilIcon class="h-5 w-5 stroke-2" />
+                </NuxtLink>
+                <!-- Close Button -->
+                <button
+                  class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  :title="t('common.close')"
+                  @click="closeModal"
+                >
+                  <XMarkIcon class="h-6 w-6 stroke-[1.5]" />
+                </button>
+              </div>
             </div>
 
             <!-- Loading State -->
-            <div v-if="isLoading" class="p-12 flex items-center justify-center">
+            <div v-if="isLoading" class="p-12 flex items-center justify-center flex-1">
               <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600" />
             </div>
 
-            <!-- Body -->
-            <div v-else-if="displayTransaction" class="p-6 space-y-6">
+            <!-- Body - Scrollable -->
+            <div v-else-if="displayTransaction" class="p-6 space-y-6 overflow-y-auto flex-1">
               <!-- Fecha y Hora -->
               <div>
                 <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
@@ -436,23 +449,6 @@ onUnmounted(() => {
                   {{ formatDateTime(displayTransaction.updated_at) }}
                 </div>
               </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="flex justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
-              <NuxtLink
-                v-if="displayTransaction"
-                :to="getEditRoute(displayTransaction)"
-                class="px-4 py-2 text-sm font-medium text-primary-700 bg-white border border-primary-300 rounded-md hover:bg-primary-50 transition-colors"
-              >
-                {{ editButtonLabel }}
-              </NuxtLink>
-              <button
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                @click="closeModal"
-              >
-                Cerrar
-              </button>
             </div>
           </div>
         </div>
